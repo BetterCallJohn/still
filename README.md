@@ -8,6 +8,9 @@ startup. On commence par toute la collection **Stripe Press**.
 
 ## L'expérience
 
+- **Bilingue (FR / EN)** : toute l'interface **et le contenu des fiches** sont
+  traduits. Sélecteur FR/EN dans l'en-tête, langue détectée automatiquement au
+  premier lancement puis persistée en `localStorage`.
 - **Feed vertical** façon Instagram : stories en haut, posts qui défilent.
 - **Carrousels swipe** (scroll-snap) : chaque livre = une slideshow de 6-7
   fiches (couverture → points clés → citation → à retenir).
@@ -32,7 +35,10 @@ The Lean Startup · Zero to One · The Hard Thing About Hard Things ·
 The Mom Test · Founders at Work
 
 Le contenu vit dans [`src/data/books.ts`](src/data/books.ts) — ajoute un livre
-en respectant le type `Book` et il apparaît partout automatiquement.
+en respectant le type `RawBook` et il apparaît partout automatiquement. Chaque
+champ texte est soit une `string` neutre (noms propres), soit une paire
+`{ fr, en }` traduite ; le helper `pick()` résout vers la langue active. Les
+libellés d'interface sont dans [`src/i18n.ts`](src/i18n.ts).
 
 ## Stack
 

@@ -1,5 +1,6 @@
 import type { Book } from '../types'
 import { GridTiles } from './GridTiles'
+import { useLang } from '../lang'
 
 interface ProfileViewProps {
   allBooks: Book[]
@@ -9,6 +10,7 @@ interface ProfileViewProps {
 }
 
 export function ProfileView({ allBooks, likedBooks, savedCount, onOpen }: ProfileViewProps) {
+  const { t } = useLang()
   const totalSlides = allBooks.reduce((n, b) => n + b.slides.length, 0)
   return (
     <div className="pb-4">
@@ -18,22 +20,19 @@ export function ProfileView({ allBooks, likedBooks, savedCount, onOpen }: Profil
             📚
           </div>
           <div className="flex-1 grid grid-cols-3 text-center">
-            <Stat n={likedBooks.length} label="aimés" />
-            <Stat n={savedCount} label="enregistrés" />
-            <Stat n={totalSlides} label="fiches" />
+            <Stat n={likedBooks.length} label={t.statLiked} />
+            <Stat n={savedCount} label={t.statSaved} />
+            <Stat n={totalSlides} label={t.statCards} />
           </div>
         </div>
         <div className="mt-3">
-          <div className="font-semibold text-sm">Ton parcours</div>
-          <p className="text-sm text-neutral-300 leading-snug mt-0.5">
-            Apprenant sur <span className="font-semibold">still</span> · {allBooks.length} livres startup, à un swipe.
-            Commence par la collection Stripe Press. ✦
-          </p>
+          <div className="font-semibold text-sm">{t.journeyTitle}</div>
+          <p className="text-sm text-neutral-300 leading-snug mt-0.5">{t.journeyBody(allBooks.length)}</p>
         </div>
       </div>
 
       <div className="px-4 pb-2 text-sm font-semibold text-neutral-300 border-t border-neutral-800 pt-3">
-        {likedBooks.length > 0 ? 'Aimés récemment' : 'Toute la bibliothèque'}
+        {likedBooks.length > 0 ? t.likedRecent : t.allLibrary}
       </div>
       <GridTiles books={likedBooks.length > 0 ? likedBooks : allBooks} onOpen={onOpen} />
     </div>

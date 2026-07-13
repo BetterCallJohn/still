@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Book } from '../types'
 import { Carousel } from './Carousel'
 import { HeartIcon, CommentIcon, ShareIcon, BookmarkIcon } from './Icons'
+import { useLang } from '../lang'
 
 interface PostProps {
   book: Book
@@ -17,6 +18,7 @@ function formatCount(n: number) {
 }
 
 export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostProps) {
+  const { t } = useLang()
   const [burst, setBurst] = useState(false)
   const [showFull, setShowFull] = useState(false)
 
@@ -57,7 +59,7 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostPro
           <div className="text-sm font-semibold leading-tight">{book.handle}</div>
           <div className="text-[11px] text-neutral-400 leading-tight truncate">{book.publisher} · {book.author}</div>
         </div>
-        <button className="text-neutral-400 text-xl leading-none px-2" aria-label="Options">⋯</button>
+        <button className="text-neutral-400 text-xl leading-none px-2" aria-label={t.optionsLabel}>⋯</button>
       </header>
 
       {/* carousel with double-tap-to-like */}
@@ -72,18 +74,18 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostPro
 
       {/* action bar */}
       <div className="flex items-center gap-4 px-3.5 pt-3">
-        <button onClick={doLike} aria-label="J'aime" className="active:scale-90 transition-transform">
+        <button onClick={doLike} aria-label={t.likeLabel} className="active:scale-90 transition-transform">
           <HeartIcon filled={liked} />
         </button>
-        <button aria-label="Commenter" className="active:scale-90 transition-transform text-white">
+        <button aria-label={t.commentLabel} className="active:scale-90 transition-transform text-white">
           <CommentIcon />
         </button>
-        <button aria-label="Partager" className="active:scale-90 transition-transform text-white">
+        <button aria-label={t.shareLabel} className="active:scale-90 transition-transform text-white">
           <ShareIcon />
         </button>
         <button
           onClick={() => onToggleSave(book.id)}
-          aria-label="Enregistrer"
+          aria-label={t.saveLabel}
           className="ml-auto active:scale-90 transition-transform text-white"
         >
           <BookmarkIcon filled={saved} />
@@ -92,14 +94,14 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostPro
 
       {/* likes + caption */}
       <div className="px-3.5 pt-2">
-        <div className="text-sm font-semibold">{formatCount(likeCount)} j'aime</div>
+        <div className="text-sm font-semibold">{formatCount(likeCount)} {t.likes}</div>
         <p className="text-sm mt-1 leading-snug">
           <span className="font-semibold">{book.handle}</span>{' '}
           <span className="text-neutral-100">{book.caption}</span>
         </p>
         {!showFull ? (
           <button onClick={() => setShowFull(true)} className="text-sm text-neutral-500 mt-0.5">
-            … voir les {book.slides.length} fiches
+            {t.viewCards(book.slides.length)}
           </button>
         ) : (
           <div className="mt-2 space-y-1.5">

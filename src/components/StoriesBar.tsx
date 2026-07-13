@@ -1,6 +1,11 @@
-import { stories } from '../data/books'
+interface Story {
+  id: string
+  handle: string
+  glyph: string
+  theme: { from: string; to: string; text: string }
+}
 
-export function StoriesBar({ onOpen }: { onOpen: (id: string) => void }) {
+export function StoriesBar({ stories, onOpen }: { stories: Story[]; onOpen: (id: string) => void }) {
   return (
     <div className="no-scrollbar flex gap-3.5 overflow-x-auto px-3.5 py-3 border-b border-neutral-800">
       {stories.map((s) => (

@@ -1,37 +1,63 @@
+export type Lang = 'fr' | 'en'
+
+/** A localized string. */
+export type L = { fr: string; en: string }
+
+/** Either a language-neutral string (proper nouns, numbers) or a localized pair. */
+export type Loc = string | L
+
+/** Resolve a localizable value to the active language. */
+export function pick(lang: Lang, value: Loc): string {
+  return typeof value === 'string' ? value : value[lang]
+}
+
 export type SlideKind = 'cover' | 'point' | 'quote' | 'takeaway'
 
+// ── Authoring shapes: text fields may be localized ────────────────────────
+export interface RawSlide {
+  kind: SlideKind
+  eyebrow?: Loc
+  title: Loc
+  body?: Loc
+  attribution?: Loc
+}
+
+export interface RawBook {
+  id: string
+  title: string
+  author: string
+  publisher: string
+  handle: string
+  caption: Loc
+  tags: string[]
+  theme: { from: string; to: string; text: string }
+  glyph: string
+  readTime: string
+  slides: RawSlide[]
+  likes: number
+}
+
+// ── View shapes: plain strings, resolved for the current language ─────────
 export interface Slide {
   kind: SlideKind
-  /** Short eyebrow / label shown above the title, e.g. "POINT CLÉ 01" */
   eyebrow?: string
   title: string
   body?: string
-  /** For quote slides */
   attribution?: string
 }
 
 export interface Book {
   id: string
-  /** Book title */
   title: string
   author: string
-  /** Publisher / collection, e.g. "Stripe Press" */
   publisher: string
-  /** Instagram-style handle, e.g. "stripepress" */
   handle: string
-  /** One-line hook used as the post caption */
   caption: string
-  /** Topic tags without the # */
   tags: string[]
-  /** Color theme (Tailwind-compatible gradient stops as hex) */
   theme: { from: string; to: string; text: string }
-  /** Emoji used as the avatar / cover glyph */
   glyph: string
-  /** Reading time estimate for the full book */
   readTime: string
-  /** The carousel slides */
   slides: Slide[]
-  /** Seeded like count for display */
   likes: number
 }
 

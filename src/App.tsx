@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import type { Tab } from './types'
-import { books } from './data/books'
+import { getBooks, getStories } from './data/books'
+import { useLang } from './lang'
 import { usePersistentSet } from './hooks/usePersistentSet'
 import { TopBar } from './components/TopBar'
 import { BottomNav } from './components/BottomNav'
@@ -11,6 +12,7 @@ import { ProfileView } from './components/ProfileView'
 import { BookModal } from './components/BookModal'
 
 export default function App() {
+  const { lang } = useLang()
   const [tab, setTab] = useState<Tab>('home')
   const [openId, setOpenId] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -18,9 +20,11 @@ export default function App() {
   const liked = usePersistentSet('still.liked')
   const saved = usePersistentSet('still.saved')
 
-  const savedBooks = useMemo(() => books.filter((b) => saved.has(b.id)), [saved])
-  const likedBooks = useMemo(() => books.filter((b) => liked.has(b.id)), [liked])
-  const openBook = useMemo(() => books.find((b) => b.id === openId) ?? null, [openId])
+  const books = useMemo(() => getBooks(lang), [lang])
+  const stories = useMemo(() => getStories(lang), [lang])
+  const savedBooks = useMemo(() => books.filter((b) => saved.has(b.id)), [books, saved])
+  const likedBooks = useMemo(() => books.filter((b) => liked.has(b.id)), [books, liked])
+  const openBook = useMemo(() => books.find((b) => b.id === openId) ?? null, [books, openId])
 
   function changeTab(t: Tab) {
     setTab(t)
@@ -35,6 +39,7 @@ export default function App() {
         {tab === 'home' && (
           <Feed
             books={books}
+            stories={stories}
             isLiked={liked.has}
             isSaved={saved.has}
             toggleLike={liked.toggle}

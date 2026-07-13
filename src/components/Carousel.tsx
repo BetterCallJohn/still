@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react'
 import type { Book, Slide } from '../types'
 import { ClockIcon } from './Icons'
+import { useLang } from '../lang'
 
 function SlideCard({ slide, book, index, total }: { slide: Slide; book: Book; index: number; total: number }) {
   const { theme } = book
+  const { t } = useLang()
   return (
     <div
       className="snap-center shrink-0 w-full h-full relative flex flex-col justify-between p-7 select-none"
@@ -46,7 +48,7 @@ function SlideCard({ slide, book, index, total }: { slide: Slide; book: Book; in
         {slide.kind === 'cover' ? (
           <span className="flex items-center gap-1"><ClockIcon /> {book.readTime}</span>
         ) : slide.kind === 'takeaway' ? (
-          <span>✦ swipe pour le suivant</span>
+          <span>{t.swipeNext}</span>
         ) : (
           <span className="brand text-base opacity-90">still</span>
         )}

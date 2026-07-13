@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { Book } from '../types'
+import { useLang } from '../lang'
 
 interface ExploreGridProps {
   books: Book[]
@@ -7,6 +8,7 @@ interface ExploreGridProps {
 }
 
 export function ExploreGrid({ books, onOpen }: ExploreGridProps) {
+  const { t } = useLang()
   const [query, setQuery] = useState('')
 
   const filtered = useMemo(() => {
@@ -27,7 +29,7 @@ export function ExploreGrid({ books, onOpen }: ExploreGridProps) {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Rechercher un livre, un auteur, un thème…"
+          placeholder={t.searchPlaceholder}
           className="w-full bg-neutral-900 rounded-xl px-4 py-2.5 text-sm placeholder:text-neutral-500 outline-none focus:ring-1 focus:ring-neutral-600"
         />
       </div>
@@ -45,7 +47,7 @@ export function ExploreGrid({ books, onOpen }: ExploreGridProps) {
         ))}
       </div>
       {filtered.length === 0 && (
-        <p className="text-center text-neutral-500 text-sm py-10">Aucun résultat pour « {query} »</p>
+        <p className="text-center text-neutral-500 text-sm py-10">{t.noResults(query)}</p>
       )}
     </div>
   )

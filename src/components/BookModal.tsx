@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import type { Book } from '../types'
 import { Carousel } from './Carousel'
 import { HeartIcon, BookmarkIcon } from './Icons'
+import { useLang } from '../lang'
 
 interface BookModalProps {
   book: Book
@@ -13,6 +14,7 @@ interface BookModalProps {
 }
 
 export function BookModal({ book, liked, saved, onToggleLike, onToggleSave, onClose }: BookModalProps) {
+  const { t } = useLang()
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
@@ -35,7 +37,7 @@ export function BookModal({ book, liked, saved, onToggleLike, onToggleSave, onCl
             <div className="text-sm font-semibold">{book.handle}</div>
             <div className="text-[11px] text-neutral-400 truncate">{book.title} · {book.author}</div>
           </div>
-          <button onClick={onClose} aria-label="Fermer" className="text-2xl text-neutral-300 px-2 leading-none">×</button>
+          <button onClick={onClose} aria-label={t.closeLabel} className="text-2xl text-neutral-300 px-2 leading-none">×</button>
         </div>
 
         <div className="rounded-xl overflow-hidden mx-2">
