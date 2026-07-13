@@ -27,7 +27,6 @@ export interface UIStrings {
   headerProfile: string
   optionsLabel: string
   likeLabel: string
-  commentLabel: string
   shareLabel: string
   saveLabel: string
   closeLabel: string
@@ -63,7 +62,6 @@ const dict: Record<Lang, UIStrings> = {
     headerProfile: 'Profil',
     optionsLabel: 'Options',
     likeLabel: "J'aime",
-    commentLabel: 'Commenter',
     shareLabel: 'Partager',
     saveLabel: 'Enregistrer',
     closeLabel: 'Fermer',
@@ -96,7 +94,6 @@ const dict: Record<Lang, UIStrings> = {
     headerProfile: 'Profile',
     optionsLabel: 'Options',
     likeLabel: 'Like',
-    commentLabel: 'Comment',
     shareLabel: 'Share',
     saveLabel: 'Save',
     closeLabel: 'Close',

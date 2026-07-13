@@ -26,7 +26,7 @@ export interface RawBook {
   id: string
   title: string
   author: string
-  publisher: string
+  publisher: Loc
   handle: string
   caption: Loc
   tags: string[]

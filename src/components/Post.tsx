@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Book } from '../types'
 import { Carousel } from './Carousel'
-import { HeartIcon, CommentIcon, ShareIcon, BookmarkIcon } from './Icons'
+import { HeartIcon, ShareIcon, BookmarkIcon } from './Icons'
 import { useLang } from '../lang'
 
 interface PostProps {
@@ -76,9 +76,6 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostPro
       <div className="flex items-center gap-4 px-3.5 pt-3">
         <button onClick={doLike} aria-label={t.likeLabel} className="active:scale-90 transition-transform">
           <HeartIcon filled={liked} />
-        </button>
-        <button aria-label={t.commentLabel} className="active:scale-90 transition-transform text-white">
-          <CommentIcon />
         </button>
         <button aria-label={t.shareLabel} className="active:scale-90 transition-transform text-white">
           <ShareIcon />

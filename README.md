@@ -34,6 +34,16 @@ The Making of Prince of Persia · The Man from the Future · Pieces of the Actio
 The Lean Startup · Zero to One · The Hard Thing About Hard Things ·
 The Mom Test · Founders at Work
 
+### Autobiographies & mémoires — moments clés de grands patrons
+Shoe Dog (Phil Knight / Nike) · Made in America (Sam Walton / Walmart) ·
+Pour Your Heart Into It (Howard Schultz / Starbucks) ·
+Losing My Virginity (Richard Branson / Virgin) · Principles (Ray Dalio) ·
+Autobiography (Andrew Carnegie) · My Life and Work (Henry Ford) ·
+Walt Disney · Leading by Design (Ingvar Kamprad / IKEA) ·
+Grinding It Out (Ray Kroc / McDonald's) · The Snowball (Warren Buffett) ·
+Steve Jobs · Elon Musk · Source Code (Bill Gates) ·
+Invent and Wander (Jeff Bezos)
+
 Le contenu vit dans [`src/data/books.ts`](src/data/books.ts) — ajoute un livre
 en respectant le type `RawBook` et il apparaît partout automatiquement. Chaque
 champ texte est soit une `string` neutre (noms propres), soit une paire
