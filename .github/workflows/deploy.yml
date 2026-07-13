@@ -1,0 +1,50 @@
+name: Deploy to GitHub Pages
+
+# Déploie le site à chaque push sur la branche de dev ou sur main.
+on:
+  push:
+    branches:
+      - main
+      - claude/startup-book-summary-app-dtgizx
+  workflow_dispatch:
+
+# Permissions requises pour publier sur GitHub Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un seul déploiement à la fois ; annule les runs en cours.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npm run build
+        env:
+          # Le repo s'appelle "still" -> site servi sous /still/
+          VITE_BASE: /still/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
