@@ -1,5 +1,4 @@
 import type { Tab } from '../types'
-import { HeartIcon } from './Icons'
 import { useLang } from '../lang'
 
 export function TopBar({ tab }: { tab: Tab }) {
@@ -37,13 +36,7 @@ export function TopBar({ tab }: { tab: Tab }) {
       {tab === 'home' ? (
         <>
           <span className="brand text-2xl">still</span>
-          <div className="flex items-center gap-3 text-white">
-            {LangToggle}
-            <HeartIcon className="w-6 h-6" />
-            <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-          </div>
+          {LangToggle}
         </>
       ) : (
         <>

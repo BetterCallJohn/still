@@ -57,8 +57,9 @@ function SlideCard({ slide, book, index, total }: { slide: Slide; book: Book; in
   )
 }
 
-export function Carousel({ book }: { book: Book }) {
+export function Carousel({ book, onComplete }: { book: Book; onComplete?: () => void }) {
   const scroller = useRef<HTMLDivElement>(null)
+  const completed = useRef(false)
   const [active, setActive] = useState(0)
   const total = book.slides.length
 
@@ -67,6 +68,11 @@ export function Carousel({ book }: { book: Book }) {
     if (!el) return
     const idx = Math.round(el.scrollLeft / el.clientWidth)
     if (idx !== active) setActive(idx)
+    // "Lu en entier" : l'utilisateur a atteint la dernière fiche.
+    if (idx >= total - 1 && !completed.current) {
+      completed.current = true
+      onComplete?.()
+    }
   }
 
   return (

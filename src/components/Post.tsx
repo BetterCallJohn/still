@@ -10,17 +10,14 @@ interface PostProps {
   saved: boolean
   onToggleLike: (id: string) => void
   onToggleSave: (id: string) => void
+  onRead: (id: string) => void
 }
 
-function formatCount(n: number) {
-  if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'k'
-  return String(n)
-}
-
-export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostProps) {
+export function Post({ book, liked, saved, onToggleLike, onToggleSave, onRead }: PostProps) {
   const { t } = useLang()
   const [burst, setBurst] = useState(false)
   const [showFull, setShowFull] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   function doLike() {
     if (!liked) {
@@ -38,7 +35,25 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostPro
     }
   }
 
-  const likeCount = book.likes + (liked ? 1 : 0)
+  async function share() {
+    const url = window.location.href
+    const data: ShareData = {
+      title: `${book.title} — ${book.author}`,
+      text: `${book.caption}\n\nsur still`,
+      url,
+    }
+    try {
+      if (navigator.share) {
+        await navigator.share(data)
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(`${data.title}\n${url}`)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 1600)
+      }
+    } catch {
+      /* partage annulé par l'utilisateur — on ignore */
+    }
+  }
 
   return (
     <article className="border-b border-neutral-800 pb-2">
@@ -48,7 +63,6 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostPro
           className="w-9 h-9 rounded-full flex items-center justify-center text-lg ring-2 ring-offset-2 ring-offset-black"
           style={{
             background: `linear-gradient(135deg, ${book.theme.from}, ${book.theme.to})`,
-            // gradient ring feel
             boxShadow: `0 0 0 2px ${book.theme.from}`,
           }}
           aria-hidden
@@ -62,9 +76,9 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostPro
         <button className="text-neutral-400 text-xl leading-none px-2" aria-label={t.optionsLabel}>⋯</button>
       </header>
 
-      {/* carousel with double-tap-to-like */}
+      {/* carousel with double-tap-to-like; reaching the last card marks it read */}
       <div className="relative" onDoubleClick={onDoubleTap}>
-        <Carousel book={book} />
+        <Carousel book={book} onComplete={() => onRead(book.id)} />
         {burst && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <HeartIcon filled className="w-24 h-24 animate-pop drop-shadow-lg" />
@@ -77,9 +91,10 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostPro
         <button onClick={doLike} aria-label={t.likeLabel} className="active:scale-90 transition-transform">
           <HeartIcon filled={liked} />
         </button>
-        <button aria-label={t.shareLabel} className="active:scale-90 transition-transform text-white">
+        <button onClick={share} aria-label={t.shareLabel} className="active:scale-90 transition-transform text-white">
           <ShareIcon />
         </button>
+        {copied && <span className="text-xs text-emerald-400 font-medium">{t.linkCopied}</span>}
         <button
           onClick={() => onToggleSave(book.id)}
           aria-label={t.saveLabel}
@@ -89,10 +104,9 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostPro
         </button>
       </div>
 
-      {/* likes + caption */}
+      {/* caption */}
       <div className="px-3.5 pt-2">
-        <div className="text-sm font-semibold">{formatCount(likeCount)} {t.likes}</div>
-        <p className="text-sm mt-1 leading-snug">
+        <p className="text-sm leading-snug">
           <span className="font-semibold">{book.handle}</span>{' '}
           <span className="text-neutral-100">{book.caption}</span>
         </p>
@@ -111,8 +125,8 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave }: PostPro
           </div>
         )}
         <div className="mt-1.5 flex flex-wrap gap-x-2 text-sm text-sky-400">
-          {book.tags.map((t) => (
-            <span key={t}>#{t}</span>
+          {book.tags.map((tag) => (
+            <span key={tag}>#{tag}</span>
           ))}
         </div>
       </div>

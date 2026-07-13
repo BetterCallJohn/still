@@ -10,10 +10,11 @@ interface BookModalProps {
   saved: boolean
   onToggleLike: (id: string) => void
   onToggleSave: (id: string) => void
+  onRead: (id: string) => void
   onClose: () => void
 }
 
-export function BookModal({ book, liked, saved, onToggleLike, onToggleSave, onClose }: BookModalProps) {
+export function BookModal({ book, liked, saved, onToggleLike, onToggleSave, onRead, onClose }: BookModalProps) {
   const { t } = useLang()
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -41,7 +42,7 @@ export function BookModal({ book, liked, saved, onToggleLike, onToggleSave, onCl
         </div>
 
         <div className="rounded-xl overflow-hidden mx-2">
-          <Carousel book={book} />
+          <Carousel book={book} onComplete={() => onRead(book.id)} />
         </div>
 
         <div className="flex items-center gap-5 px-4 py-4">

@@ -7,10 +7,11 @@ export interface UIStrings {
   navProfile: string
   searchPlaceholder: string
   noResults: (q: string) => string
-  likes: string
   viewCards: (n: number) => string
   swipeNext: string
   feedEnd: string
+  feedAllCaught: string
+  linkCopied: string
   savedTitle: string
   savedSubtitle: string
   savedEmptyTitle: string
@@ -41,10 +42,12 @@ const dict: Record<Lang, UIStrings> = {
     navProfile: 'Profil',
     searchPlaceholder: 'Rechercher un livre, un auteur, un thème…',
     noResults: (q) => `Aucun résultat pour « ${q} »`,
-    likes: "j'aime",
     viewCards: (n) => `… voir les ${n} fiches`,
     swipeNext: '✦ swipe pour le suivant',
     feedEnd: 'Tu as tout scrollé. Reviens demain pour apprendre encore. ✦',
+    feedAllCaught:
+      "Tu es à jour ! Tout ce que tu as lu, aimé ou enregistré est rangé dans tes onglets. Reviens plus tard pour de nouvelles fiches. ✦",
+    linkCopied: 'Lien copié ✓',
     savedTitle: 'Enregistrés',
     savedSubtitle: 'Tes fiches à relire, toujours à portée.',
     savedEmptyTitle: "Rien d'enregistré",
@@ -74,10 +77,12 @@ const dict: Record<Lang, UIStrings> = {
     navProfile: 'Profile',
     searchPlaceholder: 'Search a book, an author, a topic…',
     noResults: (q) => `No results for “${q}”`,
-    likes: 'likes',
     viewCards: (n) => `… view all ${n} cards`,
     swipeNext: '✦ swipe for the next',
     feedEnd: "You've scrolled it all. Come back tomorrow to keep learning. ✦",
+    feedAllCaught:
+      "You're all caught up! Everything you've read, liked or saved lives in your tabs. Come back later for fresh cards. ✦",
+    linkCopied: 'Link copied ✓',
     savedTitle: 'Saved',
     savedSubtitle: 'Your cards to revisit, always at hand.',
     savedEmptyTitle: 'Nothing saved yet',

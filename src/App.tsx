@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import type { Tab } from './types'
-import { getBooks, getStories } from './data/books'
+import { getBooks } from './data/books'
 import { useLang } from './lang'
 import { usePersistentSet } from './hooks/usePersistentSet'
 import { TopBar } from './components/TopBar'
@@ -19,12 +19,18 @@ export default function App() {
 
   const liked = usePersistentSet('still.liked')
   const saved = usePersistentSet('still.saved')
+  const read = usePersistentSet('still.read')
 
   const books = useMemo(() => getBooks(lang), [lang])
-  const stories = useMemo(() => getStories(lang), [lang])
   const savedBooks = useMemo(() => books.filter((b) => saved.has(b.id)), [books, saved])
   const likedBooks = useMemo(() => books.filter((b) => liked.has(b.id)), [books, liked])
   const openBook = useMemo(() => books.find((b) => b.id === openId) ?? null, [books, openId])
+
+  // Consommé = lu en entier ∪ aimé ∪ enregistré → exclu du fil principal.
+  const consumed = useMemo(
+    () => new Set<string>([...read.set, ...liked.set, ...saved.set]),
+    [read.set, liked.set, saved.set],
+  )
 
   function changeTab(t: Tab) {
     setTab(t)
@@ -39,12 +45,12 @@ export default function App() {
         {tab === 'home' && (
           <Feed
             books={books}
-            stories={stories}
+            consumed={consumed}
             isLiked={liked.has}
             isSaved={saved.has}
             toggleLike={liked.toggle}
             toggleSave={saved.toggle}
-            onOpenStory={setOpenId}
+            markRead={read.add}
           />
         )}
         {tab === 'explore' && <ExploreGrid books={books} onOpen={setOpenId} />}
@@ -63,6 +69,7 @@ export default function App() {
           saved={saved.has(openBook.id)}
           onToggleLike={liked.toggle}
           onToggleSave={saved.toggle}
+          onRead={read.add}
           onClose={() => setOpenId(null)}
         />
       )}

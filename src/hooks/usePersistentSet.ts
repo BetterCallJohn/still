@@ -28,7 +28,16 @@ export function usePersistentSet(key: string) {
     })
   }, [])
 
+  const add = useCallback((id: string) => {
+    setSet((prev) => {
+      if (prev.has(id)) return prev
+      const next = new Set(prev)
+      next.add(id)
+      return next
+    })
+  }, [])
+
   const has = useCallback((id: string) => set.has(id), [set])
 
-  return { set, has, toggle }
+  return { set, has, toggle, add }
 }
