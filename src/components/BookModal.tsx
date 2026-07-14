@@ -42,7 +42,7 @@ export function BookModal({ post, liked, saved, onToggleLike, onToggleSave, onRe
         </div>
 
         <div className="mx-2">
-          <Carousel post={post} onComplete={() => onRead(post.id)} />
+          <Carousel post={post} onComplete={() => onRead(post.id)} alwaysKeyboard />
         </div>
 
         <div className="flex items-center gap-5 px-4 py-4">

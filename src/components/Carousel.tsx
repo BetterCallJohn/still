@@ -57,7 +57,16 @@ function SlideCard({ slide, post, index, total }: { slide: Slide; post: Post; in
   )
 }
 
-export function Carousel({ post, onComplete }: { post: Post; onComplete?: () => void }) {
+export function Carousel({
+  post,
+  onComplete,
+  alwaysKeyboard = false,
+}: {
+  post: Post
+  onComplete?: () => void
+  /** Clavier ← / → actif sans survol (ex. post zoomé dans le modal). */
+  alwaysKeyboard?: boolean
+}) {
   const scroller = useRef<HTMLDivElement>(null)
   const completed = useRef(false)
   const [active, setActive] = useState(0)
@@ -81,10 +90,11 @@ export function Carousel({ post, onComplete }: { post: Post; onComplete?: () => 
     el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' })
   }
 
-  // Navigation clavier (desktop) : ← / → quand le curseur survole le carrousel.
+  // Navigation clavier (desktop) : ← / → quand le curseur survole le carrousel,
+  // ou en permanence quand le post est zoomé (alwaysKeyboard).
   const [hovered, setHovered] = useState(false)
   useEffect(() => {
-    if (!hovered) return
+    if (!hovered && !alwaysKeyboard) return
     function onKey(e: KeyboardEvent) {
       if (e.key === 'ArrowLeft') {
         e.preventDefault()
@@ -96,7 +106,7 @@ export function Carousel({ post, onComplete }: { post: Post; onComplete?: () => 
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [hovered])
+  }, [hovered, alwaysKeyboard])
 
   const arrowClass =
     'hidden md:flex absolute top-1/2 -translate-y-1/2 w-9 h-9 items-center justify-center rounded-full border border-line bg-surface text-ink hover:bg-line shadow-sm z-10'
