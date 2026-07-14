@@ -39,7 +39,7 @@ export default function App() {
   }
 
   return (
-    <div className="h-full bg-black md:flex">
+    <div className="h-full bg-page md:flex">
       {/* Desktop-only left nav rail */}
       <Sidebar tab={tab} onChange={changeTab} />
 

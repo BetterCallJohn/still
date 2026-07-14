@@ -32,12 +32,12 @@ export function ExploreGrid({ posts, onOpen }: ExploreGridProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t.searchPlaceholder}
-          className="w-full bg-neutral-900 rounded-xl px-4 py-2.5 text-sm placeholder:text-neutral-500 outline-none focus:ring-1 focus:ring-neutral-600"
+          className="w-full bg-surface rounded-xl px-4 py-2.5 text-sm placeholder:text-faint outline-none focus:ring-1 focus:ring-neutral-600"
         />
       </div>
       <GridTiles posts={filtered} onOpen={onOpen} />
       {filtered.length === 0 && (
-        <p className="text-center text-neutral-500 text-sm py-10">{t.noResults(query)}</p>
+        <p className="text-center text-faint text-sm py-10">{t.noResults(query)}</p>
       )}
     </div>
   )

@@ -56,11 +56,11 @@ export function Post({ post, liked, saved, onToggleLike, onToggleSave, onRead }:
   }
 
   return (
-    <article className="border-b border-neutral-800 pb-2">
+    <article className="border-b border-line pb-2">
       {/* header */}
       <header className="flex items-center gap-3 px-3.5 py-2.5">
         <div
-          className="w-9 h-9 rounded-full flex items-center justify-center text-lg ring-2 ring-offset-2 ring-offset-black"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-lg ring-2 ring-offset-2 ring-offset-page"
           style={{
             background: `linear-gradient(135deg, ${post.theme.from}, ${post.theme.to})`,
             boxShadow: `0 0 0 2px ${post.theme.from}`,
@@ -71,9 +71,9 @@ export function Post({ post, liked, saved, onToggleLike, onToggleSave, onRead }:
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold leading-tight">{post.handle}</div>
-          <div className="text-[11px] text-neutral-400 leading-tight truncate">{post.title} · {post.author}</div>
+          <div className="text-[11px] text-muted leading-tight truncate">{post.title} · {post.author}</div>
         </div>
-        <button className="text-neutral-400 text-xl leading-none px-2" aria-label={t.optionsLabel}>⋯</button>
+        <button className="text-muted text-xl leading-none px-2" aria-label={t.optionsLabel}>⋯</button>
       </header>
 
       {/* carousel with double-tap-to-like; reaching the last card marks it read */}
@@ -91,14 +91,14 @@ export function Post({ post, liked, saved, onToggleLike, onToggleSave, onRead }:
         <button onClick={doLike} aria-label={t.likeLabel} className="active:scale-90 transition-transform">
           <HeartIcon filled={liked} />
         </button>
-        <button onClick={share} aria-label={t.shareLabel} className="active:scale-90 transition-transform text-white">
+        <button onClick={share} aria-label={t.shareLabel} className="active:scale-90 transition-transform text-ink">
           <ShareIcon />
         </button>
         {copied && <span className="text-xs text-emerald-400 font-medium">{t.linkCopied}</span>}
         <button
           onClick={() => onToggleSave(post.id)}
           aria-label={t.saveLabel}
-          className="ml-auto active:scale-90 transition-transform text-white"
+          className="ml-auto active:scale-90 transition-transform text-ink"
         >
           <BookmarkIcon filled={saved} />
         </button>
@@ -108,17 +108,17 @@ export function Post({ post, liked, saved, onToggleLike, onToggleSave, onRead }:
       <div className="px-3.5 pt-2">
         <p className="text-sm leading-snug">
           <span className="font-semibold">{post.handle}</span>{' '}
-          <span className="text-neutral-100">{post.caption}</span>
+          <span className="text-ink">{post.caption}</span>
         </p>
         {!showFull ? (
-          <button onClick={() => setShowFull(true)} className="text-sm text-neutral-500 mt-0.5">
+          <button onClick={() => setShowFull(true)} className="text-sm text-faint mt-0.5">
             {t.viewCards(post.slides.length)}
           </button>
         ) : (
           <div className="mt-2 space-y-1.5">
             {post.slides.filter((s) => s.kind !== 'cover').map((s, i) => (
-              <p key={i} className="text-[13px] leading-snug text-neutral-300">
-                <span className="font-semibold text-white">{s.title}</span>
+              <p key={i} className="text-[13px] leading-snug text-muted">
+                <span className="font-semibold text-ink">{s.title}</span>
                 {s.body ? ` — ${s.body}` : ''}
               </p>
             ))}

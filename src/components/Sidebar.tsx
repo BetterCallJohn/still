@@ -9,9 +9,9 @@ const items: { tab: Tab; Icon: typeof HomeIcon }[] = [
   { tab: 'profile', Icon: ProfileIcon },
 ]
 
-/** Desktop-only left navigation rail (Instagram style). Hidden below md. */
+/** Desktop-only left navigation rail (icons only). Hidden below md. */
 export function Sidebar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
-  const { lang, setLang, t } = useLang()
+  const { t } = useLang()
 
   const labels: Record<Tab, string> = {
     home: t.navHome,
@@ -21,51 +21,28 @@ export function Sidebar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => voi
   }
 
   return (
-    <nav className="hidden md:flex shrink-0 flex-col h-full border-r border-neutral-800 bg-black md:w-[76px] lg:w-[245px] px-3 py-6">
-      {/* brand */}
-      <div className="px-3 mb-8 h-10 flex items-center">
-        <span className="brand text-3xl hidden lg:block">still</span>
-        <span className="text-2xl lg:hidden mx-auto" aria-hidden>📚</span>
+    <nav className="hidden md:flex shrink-0 flex-col items-center h-full w-[76px] border-r border-line bg-page px-2 py-6">
+      {/* brand mark */}
+      <div className="mb-8 h-10 flex items-center text-2xl" aria-label="still">
+        📚
       </div>
 
-      {/* nav items */}
-      <div className="flex flex-col gap-1.5">
+      {/* nav items (icons only) */}
+      <div className="flex flex-col gap-2">
         {items.map(({ tab: it, Icon }) => (
           <button
             key={it}
             onClick={() => onChange(it)}
             aria-label={labels[it]}
+            title={labels[it]}
             aria-current={tab === it ? 'page' : undefined}
-            className={`flex items-center gap-4 rounded-lg px-3 py-3 transition-colors hover:bg-neutral-900 justify-center lg:justify-start ${
-              tab === it ? 'text-white font-bold' : 'text-neutral-200 font-normal'
+            className={`flex items-center justify-center w-12 h-12 rounded-xl transition-colors hover:bg-surface ${
+              tab === it ? 'text-ink' : 'text-muted'
             }`}
           >
-            <Icon filled={tab === it} className="w-7 h-7 shrink-0" />
-            <span className="hidden lg:block text-base">{labels[it]}</span>
+            <Icon filled={tab === it} className="w-7 h-7" />
           </button>
         ))}
-      </div>
-
-      {/* spacer + language toggle */}
-      <div className="mt-auto px-1">
-        <div
-          role="group"
-          aria-label={t.langLabel}
-          className="flex items-center justify-center rounded-full bg-neutral-900 p-1 text-xs font-bold w-fit lg:w-full mx-auto"
-        >
-          {(['fr', 'en'] as const).map((l) => (
-            <button
-              key={l}
-              onClick={() => setLang(l)}
-              aria-pressed={lang === l}
-              className={`px-3 py-1 rounded-full transition-colors lg:flex-1 ${
-                lang === l ? 'bg-white text-black' : 'text-neutral-400'
-              }`}
-            >
-              {l.toUpperCase()}
-            </button>
-          ))}
-        </div>
       </div>
     </nav>
   )

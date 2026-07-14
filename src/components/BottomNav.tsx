@@ -18,13 +18,13 @@ export function BottomNav({ tab, onChange, className = '' }: { tab: Tab; onChang
     profile: t.navProfile,
   }
   return (
-    <nav className={`shrink-0 border-t border-neutral-800 bg-black/95 backdrop-blur flex items-center justify-around h-14 pb-[env(safe-area-inset-bottom)] ${className}`}>
+    <nav className={`shrink-0 border-t border-line bg-page/95 backdrop-blur flex items-center justify-around h-14 pb-[env(safe-area-inset-bottom)] ${className}`}>
       {items.map(({ tab: it, Icon }) => (
         <button
           key={it}
           onClick={() => onChange(it)}
           aria-label={labels[it]}
-          className={`flex items-center justify-center flex-1 h-full ${tab === it ? 'text-white' : 'text-neutral-500'}`}
+          className={`flex items-center justify-center flex-1 h-full ${tab === it ? 'text-ink' : 'text-faint'}`}
         >
           <Icon filled={tab === it} />
         </button>

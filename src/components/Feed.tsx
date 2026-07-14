@@ -38,8 +38,8 @@ export function Feed({ posts, consumed, isLiked, isSaved, toggleLike, toggleSave
 
   if (feedPosts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center text-center px-8 py-24 text-neutral-400">
-        <div className="brand text-3xl text-neutral-300 mb-2">still</div>
+      <div className="flex flex-col items-center justify-center text-center px-8 py-24 text-muted">
+        <div className="brand text-3xl text-muted mb-2">still</div>
         <p className="text-sm leading-relaxed">{t.feedAllCaught}</p>
       </div>
     )
@@ -58,8 +58,8 @@ export function Feed({ posts, consumed, isLiked, isSaved, toggleLike, toggleSave
           onRead={markRead}
         />
       ))}
-      <div className="py-10 text-center text-neutral-600 text-sm">
-        <div className="brand text-2xl text-neutral-400 mb-1">still</div>
+      <div className="py-10 text-center text-faint text-sm">
+        <div className="brand text-2xl text-muted mb-1">still</div>
         {t.feedEnd}
       </div>
     </div>

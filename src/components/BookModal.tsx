@@ -36,9 +36,9 @@ export function BookModal({ post, liked, saved, onToggleLike, onToggleSave, onRe
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm font-semibold">{post.handle}</div>
-            <div className="text-[11px] text-neutral-400 truncate">{post.title} · {post.author}</div>
+            <div className="text-[11px] text-muted truncate">{post.title} · {post.author}</div>
           </div>
-          <button onClick={onClose} aria-label={t.closeLabel} className="text-2xl text-neutral-300 px-2 leading-none">×</button>
+          <button onClick={onClose} aria-label={t.closeLabel} className="text-2xl text-muted px-2 leading-none">×</button>
         </div>
 
         <div className="rounded-xl overflow-hidden mx-2">

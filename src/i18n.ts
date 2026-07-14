@@ -32,6 +32,11 @@ export interface UIStrings {
   saveLabel: string
   closeLabel: string
   langLabel: string
+  settingsTitle: string
+  themeLabel: string
+  themeSystem: string
+  themeLight: string
+  themeDark: string
 }
 
 const dict: Record<Lang, UIStrings> = {
@@ -69,6 +74,11 @@ const dict: Record<Lang, UIStrings> = {
     saveLabel: 'Enregistrer',
     closeLabel: 'Fermer',
     langLabel: 'Langue',
+    settingsTitle: 'Réglages',
+    themeLabel: 'Thème',
+    themeSystem: 'Système',
+    themeLight: 'Clair',
+    themeDark: 'Sombre',
   },
   en: {
     navHome: 'Home',
@@ -103,6 +113,11 @@ const dict: Record<Lang, UIStrings> = {
     saveLabel: 'Save',
     closeLabel: 'Close',
     langLabel: 'Language',
+    settingsTitle: 'Settings',
+    themeLabel: 'Theme',
+    themeSystem: 'System',
+    themeLight: 'Light',
+    themeDark: 'Dark',
   },
 }
 

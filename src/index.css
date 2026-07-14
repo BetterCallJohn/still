@@ -1,7 +1,30 @@
 @import 'tailwindcss';
 
+/* Dark mode piloté par la classe .dark sur <html> (thème clair/sombre/système). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tokens de couleur sémantiques — valeurs claires par défaut, surchargées en .dark */
+@theme {
+  --color-page: #ffffff;
+  --color-ink: #0a0a0a;
+  --color-muted: #6b7280;
+  --color-faint: #9ca3af;
+  --color-line: #e5e7eb;
+  --color-surface: #f3f4f6;
+}
+
 :root {
+  color-scheme: light;
+}
+
+.dark {
   color-scheme: dark;
+  --color-page: #000000;
+  --color-ink: #ffffff;
+  --color-muted: #a3a3a3;
+  --color-faint: #737373;
+  --color-line: #262626;
+  --color-surface: #171717;
 }
 
 html,
@@ -12,8 +35,8 @@ body,
 
 body {
   margin: 0;
-  background: #000;
-  color: #fff;
+  background: var(--color-page);
+  color: var(--color-ink);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;

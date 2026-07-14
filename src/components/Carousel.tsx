@@ -82,7 +82,7 @@ export function Carousel({ post, onComplete }: { post: Post; onComplete?: () => 
   }
 
   return (
-    <div className="group relative w-full aspect-[4/5] bg-black">
+    <div className="group relative w-full aspect-[4/5] bg-page">
       <div
         ref={scroller}
         onScroll={onScroll}

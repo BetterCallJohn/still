@@ -7,14 +7,14 @@ export function SavedView({ posts, onOpen }: { posts: Post[]; onOpen: (id: strin
   const { t } = useLang()
   return (
     <div>
-      <div className="px-4 py-4 border-b border-neutral-800">
+      <div className="px-4 py-4 border-b border-line">
         <h1 className="text-lg font-semibold">{t.savedTitle}</h1>
-        <p className="text-sm text-neutral-400">{t.savedSubtitle}</p>
+        <p className="text-sm text-muted">{t.savedSubtitle}</p>
       </div>
       {posts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center px-8 py-24 text-neutral-500">
+        <div className="flex flex-col items-center justify-center text-center px-8 py-24 text-faint">
           <BookmarkIcon className="w-12 h-12 mb-3" />
-          <p className="font-semibold text-neutral-300">{t.savedEmptyTitle}</p>
+          <p className="font-semibold text-muted">{t.savedEmptyTitle}</p>
           <p className="text-sm mt-1">{t.savedEmptyBody}</p>
         </div>
       ) : (
