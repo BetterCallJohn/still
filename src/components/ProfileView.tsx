@@ -1,17 +1,17 @@
-import type { Book } from '../types'
+import type { Post } from '../types'
 import { GridTiles } from './GridTiles'
 import { useLang } from '../lang'
 
 interface ProfileViewProps {
-  allBooks: Book[]
-  likedBooks: Book[]
+  allPosts: Post[]
+  likedPosts: Post[]
   savedCount: number
+  bookCount: number
   onOpen: (id: string) => void
 }
 
-export function ProfileView({ allBooks, likedBooks, savedCount, onOpen }: ProfileViewProps) {
+export function ProfileView({ allPosts, likedPosts, savedCount, bookCount, onOpen }: ProfileViewProps) {
   const { t } = useLang()
-  const totalSlides = allBooks.reduce((n, b) => n + b.slides.length, 0)
   return (
     <div className="pb-4">
       <div className="px-4 pt-5 pb-4">
@@ -20,21 +20,21 @@ export function ProfileView({ allBooks, likedBooks, savedCount, onOpen }: Profil
             📚
           </div>
           <div className="flex-1 grid grid-cols-3 text-center">
-            <Stat n={likedBooks.length} label={t.statLiked} />
+            <Stat n={likedPosts.length} label={t.statLiked} />
             <Stat n={savedCount} label={t.statSaved} />
-            <Stat n={totalSlides} label={t.statCards} />
+            <Stat n={allPosts.length} label={t.statCards} />
           </div>
         </div>
         <div className="mt-3">
           <div className="font-semibold text-sm">{t.journeyTitle}</div>
-          <p className="text-sm text-neutral-300 leading-snug mt-0.5">{t.journeyBody(allBooks.length)}</p>
+          <p className="text-sm text-neutral-300 leading-snug mt-0.5">{t.journeyBody(bookCount)}</p>
         </div>
       </div>
 
       <div className="px-4 pb-2 text-sm font-semibold text-neutral-300 border-t border-neutral-800 pt-3">
-        {likedBooks.length > 0 ? t.likedRecent : t.allLibrary}
+        {likedPosts.length > 0 ? t.likedRecent : t.allLibrary}
       </div>
-      <GridTiles books={likedBooks.length > 0 ? likedBooks : allBooks} onOpen={onOpen} />
+      <GridTiles posts={likedPosts.length > 0 ? likedPosts : allPosts} onOpen={onOpen} />
     </div>
   )
 }

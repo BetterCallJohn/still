@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import type { Book } from '../types'
+import type { Post as PostType } from '../types'
 import { Carousel } from './Carousel'
 import { HeartIcon, ShareIcon, BookmarkIcon } from './Icons'
 import { useLang } from '../lang'
 
 interface PostProps {
-  book: Book
+  post: PostType
   liked: boolean
   saved: boolean
   onToggleLike: (id: string) => void
@@ -13,7 +13,7 @@ interface PostProps {
   onRead: (id: string) => void
 }
 
-export function Post({ book, liked, saved, onToggleLike, onToggleSave, onRead }: PostProps) {
+export function Post({ post, liked, saved, onToggleLike, onToggleSave, onRead }: PostProps) {
   const { t } = useLang()
   const [burst, setBurst] = useState(false)
   const [showFull, setShowFull] = useState(false)
@@ -24,7 +24,7 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave, onRead }:
       setBurst(true)
       setTimeout(() => setBurst(false), 700)
     }
-    onToggleLike(book.id)
+    onToggleLike(post.id)
   }
 
   function onDoubleTap() {
@@ -38,8 +38,8 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave, onRead }:
   async function share() {
     const url = window.location.href
     const data: ShareData = {
-      title: `${book.title} — ${book.author}`,
-      text: `${book.caption}\n\nsur still`,
+      title: `${post.title} — ${post.author}`,
+      text: `${post.caption}\n\nsur still`,
       url,
     }
     try {
@@ -62,23 +62,23 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave, onRead }:
         <div
           className="w-9 h-9 rounded-full flex items-center justify-center text-lg ring-2 ring-offset-2 ring-offset-black"
           style={{
-            background: `linear-gradient(135deg, ${book.theme.from}, ${book.theme.to})`,
-            boxShadow: `0 0 0 2px ${book.theme.from}`,
+            background: `linear-gradient(135deg, ${post.theme.from}, ${post.theme.to})`,
+            boxShadow: `0 0 0 2px ${post.theme.from}`,
           }}
           aria-hidden
         >
-          {book.glyph}
+          {post.glyph}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold leading-tight">{book.handle}</div>
-          <div className="text-[11px] text-neutral-400 leading-tight truncate">{book.publisher} · {book.author}</div>
+          <div className="text-sm font-semibold leading-tight">{post.handle}</div>
+          <div className="text-[11px] text-neutral-400 leading-tight truncate">{post.title} · {post.author}</div>
         </div>
         <button className="text-neutral-400 text-xl leading-none px-2" aria-label={t.optionsLabel}>⋯</button>
       </header>
 
       {/* carousel with double-tap-to-like; reaching the last card marks it read */}
       <div className="relative" onDoubleClick={onDoubleTap}>
-        <Carousel book={book} onComplete={() => onRead(book.id)} />
+        <Carousel post={post} onComplete={() => onRead(post.id)} />
         {burst && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <HeartIcon filled className="w-24 h-24 animate-pop drop-shadow-lg" />
@@ -96,7 +96,7 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave, onRead }:
         </button>
         {copied && <span className="text-xs text-emerald-400 font-medium">{t.linkCopied}</span>}
         <button
-          onClick={() => onToggleSave(book.id)}
+          onClick={() => onToggleSave(post.id)}
           aria-label={t.saveLabel}
           className="ml-auto active:scale-90 transition-transform text-white"
         >
@@ -107,16 +107,16 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave, onRead }:
       {/* caption */}
       <div className="px-3.5 pt-2">
         <p className="text-sm leading-snug">
-          <span className="font-semibold">{book.handle}</span>{' '}
-          <span className="text-neutral-100">{book.caption}</span>
+          <span className="font-semibold">{post.handle}</span>{' '}
+          <span className="text-neutral-100">{post.caption}</span>
         </p>
         {!showFull ? (
           <button onClick={() => setShowFull(true)} className="text-sm text-neutral-500 mt-0.5">
-            {t.viewCards(book.slides.length)}
+            {t.viewCards(post.slides.length)}
           </button>
         ) : (
           <div className="mt-2 space-y-1.5">
-            {book.slides.filter((s) => s.kind !== 'cover').map((s, i) => (
+            {post.slides.filter((s) => s.kind !== 'cover').map((s, i) => (
               <p key={i} className="text-[13px] leading-snug text-neutral-300">
                 <span className="font-semibold text-white">{s.title}</span>
                 {s.body ? ` — ${s.body}` : ''}
@@ -125,7 +125,7 @@ export function Post({ book, liked, saved, onToggleLike, onToggleSave, onRead }:
           </div>
         )}
         <div className="mt-1.5 flex flex-wrap gap-x-2 text-sm text-sky-400">
-          {book.tags.map((tag) => (
+          {post.tags.map((tag) => (
             <span key={tag}>#{tag}</span>
           ))}
         </div>

@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react'
-import type { Book } from '../types'
+import type { Post as PostType } from '../types'
 import { Post } from './Post'
 import { useLang } from '../lang'
 
 interface FeedProps {
-  books: Book[]
+  posts: PostType[]
   /** ids déjà consommés (lus en entier, aimés ou enregistrés) — exclus du fil */
   consumed: Set<string>
   isLiked: (id: string) => boolean
@@ -24,19 +24,19 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-export function Feed({ books, consumed, isLiked, isSaved, toggleLike, toggleSave, markRead }: FeedProps) {
+export function Feed({ posts, consumed, isLiked, isSaved, toggleLike, toggleSave, markRead }: FeedProps) {
   const { t } = useLang()
 
-  // Snapshot à l'ouverture du fil : ordre aléatoire des livres non consommés.
+  // Snapshot à l'ouverture du fil : ordre aléatoire des posts non consommés.
   // Recalculé à chaque montage du Feed (retour sur l'onglet Accueil).
   const [orderedIds] = useState<string[]>(() =>
-    shuffle(books.filter((b) => !consumed.has(b.id)).map((b) => b.id)),
+    shuffle(posts.filter((p) => !consumed.has(p.id)).map((p) => p.id)),
   )
 
-  const byId = useMemo(() => new Map(books.map((b) => [b.id, b])), [books])
-  const feedBooks = orderedIds.map((id) => byId.get(id)).filter((b): b is Book => Boolean(b))
+  const byId = useMemo(() => new Map(posts.map((p) => [p.id, p])), [posts])
+  const feedPosts = orderedIds.map((id) => byId.get(id)).filter((p): p is PostType => Boolean(p))
 
-  if (feedBooks.length === 0) {
+  if (feedPosts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center text-center px-8 py-24 text-neutral-400">
         <div className="brand text-3xl text-neutral-300 mb-2">still</div>
@@ -47,12 +47,12 @@ export function Feed({ books, consumed, isLiked, isSaved, toggleLike, toggleSave
 
   return (
     <div>
-      {feedBooks.map((book) => (
+      {feedPosts.map((post) => (
         <Post
-          key={book.id}
-          book={book}
-          liked={isLiked(book.id)}
-          saved={isSaved(book.id)}
+          key={post.id}
+          post={post}
+          liked={isLiked(post.id)}
+          saved={isSaved(post.id)}
           onToggleLike={toggleLike}
           onToggleSave={toggleSave}
           onRead={markRead}

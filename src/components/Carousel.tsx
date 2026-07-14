@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react'
-import type { Book, Slide } from '../types'
+import type { Post, Slide } from '../types'
 import { ClockIcon } from './Icons'
 import { useLang } from '../lang'
 
-function SlideCard({ slide, book, index, total }: { slide: Slide; book: Book; index: number; total: number }) {
-  const { theme } = book
+function SlideCard({ slide, post, index, total }: { slide: Slide; post: Post; index: number; total: number }) {
+  const { theme } = post
   const { t } = useLang()
   return (
     <div
@@ -16,14 +16,14 @@ function SlideCard({ slide, book, index, total }: { slide: Slide; book: Book; in
     >
       {/* top row */}
       <div className="flex items-center justify-between text-[11px] font-semibold tracking-wide opacity-80">
-        <span className="uppercase">{slide.eyebrow ?? book.publisher}</span>
+        <span className="uppercase">{slide.eyebrow ?? post.publisher}</span>
         <span>{index + 1}/{total}</span>
       </div>
 
       {/* main content, vertically centered */}
       <div className="flex-1 flex flex-col justify-center py-4">
         {slide.kind === 'cover' && (
-          <div className="text-6xl mb-4" aria-hidden>{book.glyph}</div>
+          <div className="text-6xl mb-4" aria-hidden>{post.glyph}</div>
         )}
         {slide.kind === 'quote' ? (
           <blockquote className="text-2xl font-semibold leading-snug italic">
@@ -44,24 +44,24 @@ function SlideCard({ slide, book, index, total }: { slide: Slide; book: Book; in
 
       {/* footer */}
       <div className="flex items-center justify-between text-[11px] font-semibold opacity-70">
-        <span>{book.author}</span>
+        <span className="truncate pr-2">{post.title} · {post.author}</span>
         {slide.kind === 'cover' ? (
-          <span className="flex items-center gap-1"><ClockIcon /> {book.readTime}</span>
+          <span className="flex items-center gap-1 shrink-0"><ClockIcon /> {post.readTime}</span>
         ) : slide.kind === 'takeaway' ? (
-          <span>{t.swipeNext}</span>
+          <span className="shrink-0">{t.swipeNext}</span>
         ) : (
-          <span className="brand text-base opacity-90">still</span>
+          <span className="brand text-base opacity-90 shrink-0">still</span>
         )}
       </div>
     </div>
   )
 }
 
-export function Carousel({ book, onComplete }: { book: Book; onComplete?: () => void }) {
+export function Carousel({ post, onComplete }: { post: Post; onComplete?: () => void }) {
   const scroller = useRef<HTMLDivElement>(null)
   const completed = useRef(false)
   const [active, setActive] = useState(0)
-  const total = book.slides.length
+  const total = post.slides.length
 
   function onScroll() {
     const el = scroller.current
@@ -82,14 +82,14 @@ export function Carousel({ book, onComplete }: { book: Book; onComplete?: () => 
         onScroll={onScroll}
         className="no-scrollbar snap-x-mandatory flex overflow-x-auto w-full h-full"
       >
-        {book.slides.map((slide, i) => (
-          <SlideCard key={i} slide={slide} book={book} index={i} total={total} />
+        {post.slides.map((slide, i) => (
+          <SlideCard key={i} slide={slide} post={post} index={i} total={total} />
         ))}
       </div>
 
       {/* dots */}
       <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-1.5 pointer-events-none">
-        {book.slides.map((_, i) => (
+        {post.slides.map((_, i) => (
           <span
             key={i}
             className={`h-1.5 rounded-full transition-all duration-200 ${

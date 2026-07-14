@@ -13,7 +13,7 @@ export function pick(lang: Lang, value: Loc): string {
 
 export type SlideKind = 'cover' | 'point' | 'quote' | 'takeaway'
 
-// ── Authoring shapes: text fields may be localized ────────────────────────
+// ── Authoring shapes ──────────────────────────────────────────────────────
 export interface RawSlide {
   kind: SlideKind
   eyebrow?: Loc
@@ -22,19 +22,25 @@ export interface RawSlide {
   attribution?: Loc
 }
 
-export interface RawBook {
+/** One carousel post about a single concept from a book. */
+export interface RawPost {
+  concept: Loc
+  caption: Loc
+  tags: string[]
+  slides: RawSlide[]
+  likes?: number
+}
+
+/** A book = an "account" that publishes several posts. */
+export interface BookMeta {
   id: string
   title: string
   author: string
   publisher: Loc
   handle: string
-  caption: Loc
-  tags: string[]
   theme: { from: string; to: string; text: string }
   glyph: string
   readTime: string
-  slides: RawSlide[]
-  likes: number
 }
 
 // ── View shapes: plain strings, resolved for the current language ─────────
@@ -46,19 +52,22 @@ export interface Slide {
   attribution?: string
 }
 
-export interface Book {
+/** A feed unit: one post, carrying its parent book's account info. */
+export interface Post {
   id: string
+  bookId: string
   title: string
   author: string
   publisher: string
   handle: string
-  caption: string
-  tags: string[]
   theme: { from: string; to: string; text: string }
   glyph: string
   readTime: string
-  slides: Slide[]
+  concept: string
+  caption: string
+  tags: string[]
   likes: number
+  slides: Slide[]
 }
 
 export type Tab = 'home' | 'explore' | 'saved' | 'profile'

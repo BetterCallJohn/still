@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import type { Tab } from './types'
-import { getBooks } from './data/books'
+import { getPosts, bookMeta } from './data/books'
 import { useLang } from './lang'
 import { usePersistentSet } from './hooks/usePersistentSet'
 import { TopBar } from './components/TopBar'
@@ -21,10 +21,10 @@ export default function App() {
   const saved = usePersistentSet('still.saved')
   const read = usePersistentSet('still.read')
 
-  const books = useMemo(() => getBooks(lang), [lang])
-  const savedBooks = useMemo(() => books.filter((b) => saved.has(b.id)), [books, saved])
-  const likedBooks = useMemo(() => books.filter((b) => liked.has(b.id)), [books, liked])
-  const openBook = useMemo(() => books.find((b) => b.id === openId) ?? null, [books, openId])
+  const posts = useMemo(() => getPosts(lang), [lang])
+  const savedPosts = useMemo(() => posts.filter((p) => saved.has(p.id)), [posts, saved])
+  const likedPosts = useMemo(() => posts.filter((p) => liked.has(p.id)), [posts, liked])
+  const openPost = useMemo(() => posts.find((p) => p.id === openId) ?? null, [posts, openId])
 
   // Consommé = lu en entier ∪ aimé ∪ enregistré → exclu du fil principal.
   const consumed = useMemo(
@@ -44,7 +44,7 @@ export default function App() {
       <main ref={scrollRef} className="flex-1 overflow-y-auto no-scrollbar">
         {tab === 'home' && (
           <Feed
-            books={books}
+            posts={posts}
             consumed={consumed}
             isLiked={liked.has}
             isSaved={saved.has}
@@ -53,20 +53,26 @@ export default function App() {
             markRead={read.add}
           />
         )}
-        {tab === 'explore' && <ExploreGrid books={books} onOpen={setOpenId} />}
-        {tab === 'saved' && <SavedView books={savedBooks} onOpen={setOpenId} />}
+        {tab === 'explore' && <ExploreGrid posts={posts} onOpen={setOpenId} />}
+        {tab === 'saved' && <SavedView posts={savedPosts} onOpen={setOpenId} />}
         {tab === 'profile' && (
-          <ProfileView allBooks={books} likedBooks={likedBooks} savedCount={saved.set.size} onOpen={setOpenId} />
+          <ProfileView
+            allPosts={posts}
+            likedPosts={likedPosts}
+            savedCount={saved.set.size}
+            bookCount={bookMeta.length}
+            onOpen={setOpenId}
+          />
         )}
       </main>
 
       <BottomNav tab={tab} onChange={changeTab} />
 
-      {openBook && (
+      {openPost && (
         <BookModal
-          book={openBook}
-          liked={liked.has(openBook.id)}
-          saved={saved.has(openBook.id)}
+          post={openPost}
+          liked={liked.has(openPost.id)}
+          saved={saved.has(openPost.id)}
           onToggleLike={liked.toggle}
           onToggleSave={saved.toggle}
           onRead={read.add}

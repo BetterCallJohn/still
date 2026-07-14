@@ -1,1218 +1,844 @@
-import type { Book, Lang, RawBook, RawSlide, Slide } from '../types'
+import type { BookMeta, Lang, Post, RawPost, RawSlide, Slide } from '../types'
 import { pick } from '../types'
+import { postsByBook } from './generatedPosts'
 
-// Contenu éducatif bilingue (FR/EN) rédigé à partir des idées centrales de
-// chaque ouvrage. Un champ « string » est neutre (nom propre) ; un champ
-// { fr, en } est traduit. La collection Stripe Press vient en premier.
-// Bilingual (FR/EN) study notes distilled from each book's core ideas.
-
-const rawBooks: RawBook[] = [
-  // ─────────────────────────────  STRIPE PRESS  ─────────────────────────────
+// Métadonnées des livres ("comptes"). Le contenu (posts) vit dans generatedPosts.
+export const bookMeta: BookMeta[] = [
   {
-    id: 'working-in-public',
-    title: 'Working in Public',
-    author: 'Nadia Eghbal',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: "Et si les logiciels open source nous montraient l'avenir des créateurs sur internet ? 🧵",
-      en: 'What if open source software showed us the future of online creators? 🧵',
+    "id": "working-in-public",
+    "title": "Working in Public",
+    "author": "Nadia Eghbal",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#0f766e",
+      "to": "#134e4a",
+      "text": "#ecfeff"
     },
-    tags: ['opensource', 'community', 'creators', 'maintenance'],
-    theme: { from: '#0f766e', to: '#134e4a', text: '#ecfeff' },
-    glyph: '🌱',
-    readTime: '6 h',
-    likes: 18420,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'Working in Public', body: { fr: 'La face cachée de la production de logiciels libres — Nadia Eghbal', en: 'The making and maintenance of open source software — Nadia Eghbal' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Construire ≠ maintenir', en: 'Building ≠ maintaining' }, body: { fr: "Le coût d'un projet n'est pas de l'écrire, mais de le maintenir. L'attention du mainteneur est la vraie ressource rare, pas le code.", en: "A project's cost isn't writing it, it's maintaining it. The maintainer's attention is the truly scarce resource, not the code." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Les 4 types de communautés', en: 'The 4 types of communities' }, body: { fr: 'Selon la croissance des contributeurs et des utilisateurs : Fédérations, Clubs, Toys et Stadiums. La plupart des gros projets sont des « Stadiums » : un créateur, une foule de spectateurs.', en: 'Based on contributor and user growth: Federations, Clubs, Toys and Stadiums. Most large projects are "Stadiums": one creator, a crowd of spectators.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "L'abondance, pas la rareté", en: 'Abundance, not scarcity' }, body: { fr: "Le problème n'est plus de trouver des contributeurs, mais de gérer un trop-plein de demandes. Le goulot d'étranglement, c'est l'attention du mainteneur.", en: "The problem is no longer finding contributors, but managing a flood of demands. The bottleneck is the maintainer's attention." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Les créateurs comme infrastructure', en: 'Creators as infrastructure' }, body: { fr: "Un développeur open source ressemble de plus en plus à un créateur de contenu : audience massive, relation 1-à-plusieurs, et le risque de burn-out qui va avec.", en: 'An open source developer increasingly resembles a content creator: massive audience, one-to-many relationship, and the burnout risk that comes with it.' } },
-      { kind: 'quote', title: { fr: '« Le code est peu coûteux à écrire mais coûteux à maintenir. »', en: '"Code is cheap to write but expensive to maintain."' }, attribution: 'Nadia Eghbal' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Traite l'attention comme un budget. Réduis les coûts de coordination, dis non sans culpabilité, et conçois pour que la communauté se maintienne sans toi.", en: 'Treat attention as a budget. Cut coordination costs, say no without guilt, and design so the community sustains itself without you.' } },
-    ],
+    "glyph": "🌱",
+    "readTime": "6 h"
   },
   {
-    id: 'high-growth-handbook',
-    title: 'High Growth Handbook',
-    author: 'Elad Gil',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: 'Passer de 10 à 10 000 employés sans exploser en vol. Le manuel. 📈',
-      en: 'Scaling from 10 to 10,000 employees without blowing up. The playbook. 📈',
+    "id": "high-growth-handbook",
+    "title": "High Growth Handbook",
+    "author": "Elad Gil",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#7c3aed",
+      "to": "#4c1d95",
+      "text": "#f5f3ff"
     },
-    tags: ['scaling', 'hypergrowth', 'ceo', 'hiring'],
-    theme: { from: '#7c3aed', to: '#4c1d95', text: '#f5f3ff' },
-    glyph: '🚀',
-    readTime: '7 h',
-    likes: 24310,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'High Growth Handbook', body: { fr: 'Piloter une entreprise en hypercroissance — Elad Gil', en: 'Scaling startups from 10 to 10,000 people — Elad Gil' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Le rôle du CEO change tous les 6 mois', en: "The CEO's job changes every 6 months" }, body: { fr: "En hypercroissance, l'entreprise que tu diriges dans 6 mois n'existe pas encore. Ton job : anticiper l'organisation future, pas gérer l'actuelle.", en: "In hypergrowth, the company you'll run in 6 months doesn't exist yet. Your job: anticipate the future org, not manage the current one." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Recrute pour le poste dans 12-18 mois', en: 'Hire for the role 12-18 months out' }, body: { fr: "Embauche des dirigeants qui ont déjà opéré à l'échelle suivante — mais pas 3 crans au-dessus, ils s'ennuieraient et partiraient.", en: "Hire executives who've already operated at the next scale — but not 3 levels above, they'd get bored and leave." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Le mythe du « manager qui scale »', en: 'The myth of the manager who scales' }, body: { fr: "Peu de gens scalent indéfiniment. Ce n'est pas un échec de remplacer un bon manager devenu trop junior pour la nouvelle taille.", en: "Few people scale indefinitely. It's not a failure to replace a good manager who's become too junior for the new size." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Organise-toi autour du produit', en: 'Organize around the product' }, body: { fr: "La structure suit la stratégie. Choisis d'abord ce que tu construis, ensuite l'organisation qui le permet — jamais l'inverse.", en: 'Structure follows strategy. First decide what you build, then the org that enables it — never the reverse.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 05', en: 'KEY TAKEAWAY 05' }, title: { fr: 'Le conseil et les investisseurs', en: 'The board and investors' }, body: { fr: "Gère ton board comme un produit : ordre du jour serré, mauvaises nouvelles en premier, pas de surprises. Un board bien géré t'aide ; mal géré, il te ralentit.", en: 'Manage your board like a product: tight agenda, bad news first, no surprises. A well-run board helps you; a badly-run one slows you down.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "En hypercroissance, tout casse en même temps. Priorise les 2-3 incendies qui tueraient l'entreprise et accepte que le reste brûle un peu.", en: 'In hypergrowth, everything breaks at once. Prioritize the 2-3 fires that would kill the company and accept that the rest burns a little.' } },
-    ],
+    "glyph": "🚀",
+    "readTime": "7 h"
   },
   {
-    id: 'revolt-of-the-public',
-    title: 'The Revolt of the Public',
-    author: 'Martin Gurri',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: 'Pourquoi le public se révolte contre toutes les institutions à la fois. 📰',
-      en: 'Why the public is revolting against every institution at once. 📰',
+    "id": "revolt-of-the-public",
+    "title": "The Revolt of the Public",
+    "author": "Martin Gurri",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#b91c1c",
+      "to": "#7f1d1d",
+      "text": "#fef2f2"
     },
-    tags: ['information', 'institutions', 'internet', 'politics'],
-    theme: { from: '#b91c1c', to: '#7f1d1d', text: '#fef2f2' },
-    glyph: '📢',
-    readTime: '6 h',
-    likes: 15720,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'The Revolt of the Public', body: { fr: "Le public, l'autorité et la crise de légitimité — Martin Gurri", en: 'The public, authority and the crisis of legitimacy — Martin Gurri' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: "Le tsunami d'information", en: 'The information tsunami' }, body: { fr: "L'explosion de l'information numérique a détruit le monopole des élites sur la vérité. Les institutions ne contrôlent plus le récit.", en: 'The explosion of digital information destroyed elites’ monopoly on truth. Institutions no longer control the narrative.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'La négation, pas le programme', en: 'Negation, not a program' }, body: { fr: "Le public en réseau excelle à dire NON — renverser, dénoncer, saboter. Mais il n'a pas de programme positif pour construire l'après.", en: 'The networked public excels at saying NO — overturning, denouncing, sabotaging. But it has no positive program to build what comes after.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "L'écart entre promesse et réalité", en: 'The gap between promise and reality' }, body: { fr: "Les institutions ont promis de tout maîtriser. Internet expose chaque échec en direct. La déception nourrit la révolte permanente.", en: 'Institutions promised to master everything. The internet exposes every failure live. Disappointment fuels permanent revolt.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Le nihilisme comme risque', en: 'Nihilism as the risk' }, body: { fr: "Quand détruire l'autorité devient une fin en soi, il ne reste ni élites crédibles ni public capable de gouverner. Le vide, pas le renouveau.", en: 'When destroying authority becomes an end in itself, neither credible elites nor a public able to govern remain. Void, not renewal.' } },
-      { kind: 'quote', title: { fr: "« Le public sait ce qu'il déteste, rarement ce qu'il veut. »", en: '"The public knows what it hates, rarely what it wants."' }, attribution: { fr: "D'après Martin Gurri", en: 'After Martin Gurri' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Pour un fondateur : la confiance ne se décrète plus, elle se prouve en transparence. La légitimité descendante est morte.", en: 'For a founder: trust can no longer be decreed, it’s proven through transparency. Top-down legitimacy is dead.' } },
-    ],
+    "glyph": "📢",
+    "readTime": "6 h"
   },
   {
-    id: 'scaling-people',
-    title: 'Scaling People',
-    author: 'Claire Hughes Johnson',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: "L'ancienne COO de Stripe livre son manuel de management. 👥",
-      en: "Stripe's former COO shares her management playbook. 👥",
+    "id": "scaling-people",
+    "title": "Scaling People",
+    "author": "Claire Hughes Johnson",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#1d4ed8",
+      "to": "#1e3a8a",
+      "text": "#eff6ff"
     },
-    tags: ['management', 'operations', 'leadership', 'teams'],
-    theme: { from: '#1d4ed8', to: '#1e3a8a', text: '#eff6ff' },
-    glyph: '🧭',
-    readTime: '8 h',
-    likes: 21140,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'Scaling People', body: { fr: "Tactiques de management et de conduite d'entreprise — Claire Hughes Johnson", en: 'Tactics for management and company building — Claire Hughes Johnson' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: "Auto-conscience d'abord", en: 'Self-awareness first' }, body: { fr: "Tu ne peux pas manager les autres sans te connaître toi-même. Écris ton « mode d'emploi » : comment tu travailles, tes déclencheurs, tes angles morts.", en: 'You can’t manage others without knowing yourself. Write your own "operating manual": how you work, your triggers, your blind spots.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Fondations avant croissance', en: 'Foundations before growth' }, body: { fr: "Mission, stratégie et objectifs doivent être écrits et partagés. Sans fondations claires, scaler ne fait qu'amplifier le chaos.", en: 'Mission, strategy and goals must be written and shared. Without clear foundations, scaling only amplifies the chaos.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "Le trio d'un bon feedback", en: 'The trio of good feedback' }, body: { fr: "Observation + impact + demande. Sépare les faits de l'interprétation, et rends le feedback régulier plutôt que rare et lourd.", en: 'Observation + impact + request. Separate facts from interpretation, and make feedback frequent rather than rare and heavy.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Recruter : définir avant de chercher', en: 'Hiring: define before you search' }, body: { fr: "Écris le scorecard du poste avant le premier entretien. Recrute sur des preuves de comportement, pas sur le charisme d'un entretien.", en: 'Write the role’s scorecard before the first interview. Hire on evidence of behavior, not on interview charisma.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 05', en: 'KEY TAKEAWAY 05' }, title: { fr: "Les 1:1 sont à l'employé", en: 'The 1:1 belongs to your report' }, body: { fr: "Le point individuel appartient à ton collaborateur, pas à ton reporting. Écoute plus que tu ne parles.", en: 'The one-on-one belongs to your team member, not to your status updates. Listen more than you talk.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Manager, c'est un métier à part entière. Sois délibéré : documente, clarifie, répète. La clarté est un cadeau qu'on fait à son équipe.", en: 'Managing is a craft of its own. Be deliberate: document, clarify, repeat. Clarity is a gift you give your team.' } },
-    ],
+    "glyph": "🧭",
+    "readTime": "8 h"
   },
   {
-    id: 'an-elegant-puzzle',
-    title: 'An Elegant Puzzle',
-    author: 'Will Larson',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: "Comment gérer des systèmes d'ingénierie qui grandissent. 🧩",
-      en: 'How to manage engineering systems as they grow. 🧩',
+    "id": "an-elegant-puzzle",
+    "title": "An Elegant Puzzle",
+    "author": "Will Larson",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#0369a1",
+      "to": "#082f49",
+      "text": "#f0f9ff"
     },
-    tags: ['engineering', 'management', 'systems', 'orgdesign'],
-    theme: { from: '#0369a1', to: '#082f49', text: '#f0f9ff' },
-    glyph: '🧩',
-    readTime: '5 h',
-    likes: 16880,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'An Elegant Puzzle', body: { fr: "Les systèmes du management d'ingénierie — Will Larson", en: 'Systems of engineering management — Will Larson' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Pense en systèmes, pas en héros', en: 'Think in systems, not heroes' }, body: { fr: "Un bon manager conçoit des systèmes qui produisent de bons résultats — plutôt que de compter sur l'héroïsme individuel qui ne scale pas.", en: "A good manager designs systems that produce good outcomes — rather than relying on individual heroics that don't scale." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: "La taille d'équipe optimale", en: 'The optimal team size' }, body: { fr: "Vise 6 à 8 ingénieurs par manager. Trop petit : le manager code et micromanage. Trop grand : plus de coaching, que du firefighting.", en: 'Aim for 6 to 8 engineers per manager. Too small: the manager codes and micromanages. Too large: no coaching, only firefighting.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "Équipes sous l'eau", en: 'Teams underwater' }, body: { fr: "Une équipe débordée n'a jamais le temps de s'améliorer. Il faut d'abord lui donner du mou (renforts, gel du périmètre) avant d'exiger des gains.", en: 'An overwhelmed team never has time to improve. First give it slack (reinforcements, scope freeze) before demanding gains.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Migrations : la seule issue scalable', en: 'Migrations: the only scalable way out' }, body: { fr: "La dette technique se rembourse par des migrations. Sans elles, chaque nouveau système s'ajoute au lieu de remplacer l'ancien.", en: 'Technical debt is repaid through migrations. Without them, each new system adds to the old one instead of replacing it.' } },
-      { kind: 'quote', title: { fr: "« On ne résout pas la croissance, on la gère comme un puzzle mouvant. »", en: '"You don’t solve growth, you manage it like a shifting puzzle."' }, attribution: { fr: "D'après Will Larson", en: 'After Will Larson' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Optimise le système global, pas ton équipe locale. Les meilleures décisions déplacent parfois le pouvoir hors de tes mains.", en: 'Optimize the global system, not your local team. The best decisions sometimes move power out of your own hands.' } },
-    ],
+    "glyph": "🧩",
+    "readTime": "5 h"
   },
   {
-    id: 'ask-your-developer',
-    title: 'Ask Your Developer',
-    author: 'Jeff Lawson',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: 'Le CEO de Twilio : les développeurs sont ton arme secrète. 👩‍💻',
-      en: "Twilio's CEO: developers are your secret weapon. 👩‍💻",
+    "id": "ask-your-developer",
+    "title": "Ask Your Developer",
+    "author": "Jeff Lawson",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#dc2626",
+      "to": "#991b1b",
+      "text": "#fef2f2"
     },
-    tags: ['developers', 'api', 'buildvsbuy', 'culture'],
-    theme: { from: '#dc2626', to: '#991b1b', text: '#fef2f2' },
-    glyph: '⚙️',
-    readTime: '6 h',
-    likes: 13990,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'Ask Your Developer', body: { fr: 'Recruter et responsabiliser les développeurs pour gagner — Jeff Lawson', en: 'How to harness the power of software developers to win — Jeff Lawson' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: 'Build vs. Die', body: { fr: "À l'ère du logiciel, ceux qui construisent battent ceux qui achètent. Le code différenciant ne s'externalise pas.", en: 'In the software era, those who build beat those who buy. Differentiating code cannot be outsourced.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Traite les devs comme des créatifs', en: 'Treat developers as creatives' }, body: { fr: "Ne leur donne pas des specs à exécuter. Donne-leur le problème client et le contexte — ils trouveront de meilleures solutions que toi.", en: "Don't hand them specs to execute. Give them the customer problem and the context — they'll find better solutions than you would." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Petites équipes, gros impact', en: 'Small teams, big impact' }, body: { fr: "Des « micro-services » humains : petites équipes autonomes, propriétaires d'un périmètre, qui décident vite sans permission.", en: 'Human "microservices": small autonomous teams that own a scope and decide fast without asking permission.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Expérimenter est le vrai avantage', en: 'Experimentation is the real edge' }, body: { fr: "Le gagnant n'est pas celui qui a la meilleure idée, mais celui qui mène le plus d'expériences par unité de temps.", en: 'The winner isn’t the one with the best idea, but the one who runs the most experiments per unit of time.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Arrête de demander « peut-on acheter ça ? ». Demande à tes développeurs. La capacité à construire est devenue la compétence-cœur de toute entreprise.", en: 'Stop asking "can we buy this?" Ask your developer. The ability to build has become every company’s core competency.' } },
-    ],
+    "glyph": "⚙️",
+    "readTime": "6 h"
   },
   {
-    id: 'poor-charlies-almanack',
-    title: "Poor Charlie's Almanack",
-    author: 'Charlie Munger',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: 'La sagesse de Charlie Munger, bras droit de Buffett. 🧠',
-      en: "The wisdom of Charlie Munger, Buffett's right hand. 🧠",
+    "id": "poor-charlies-almanack",
+    "title": "Poor Charlie's Almanack",
+    "author": "Charlie Munger",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#92400e",
+      "to": "#451a03",
+      "text": "#fffbeb"
     },
-    tags: ['mentalmodels', 'decisions', 'investing', 'wisdom'],
-    theme: { from: '#92400e', to: '#451a03', text: '#fffbeb' },
-    glyph: '🦉',
-    readTime: '10 h',
-    likes: 28760,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: "Poor Charlie's Almanack", body: { fr: "L'esprit et la sagesse de Charles T. Munger", en: 'The wit and wisdom of Charles T. Munger' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Les modèles mentaux multidisciplinaires', en: 'Multidisciplinary mental models' }, body: { fr: "Empile 80-90 grands modèles (physique, bio, psycho, éco) sur ton « treillis ». À l'homme qui n'a qu'un marteau, tout ressemble à un clou.", en: 'Stack 80-90 big models (physics, biology, psychology, economics) onto a latticework. To the man with only a hammer, everything looks like a nail.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Inverser, toujours inverser', en: 'Invert, always invert' }, body: { fr: "Pour réussir, demande d'abord comment échouer à coup sûr — puis évite-le. Beaucoup de problèmes se résolvent à l'envers.", en: 'To succeed, first ask how you’d guarantee failure — then avoid it. Many problems are solved backward.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Les biais psychologiques', en: 'The psychological biases' }, body: { fr: "Munger liste 25 tendances qui détruisent le jugement : incitation, aversion à la perte, preuve sociale, engagement… Connais-les pour t'en défendre.", en: 'Munger lists 25 tendencies that wreck judgment: incentives, loss aversion, social proof, commitment… Know them to defend against them.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: "« Montre-moi l'incitation »", en: '"Show me the incentive"' }, body: { fr: "Ne sous-estime jamais le pouvoir des incitations. « Montre-moi l'incitation et je te montrerai le résultat. »", en: 'Never underestimate the power of incentives. "Show me the incentive and I’ll show you the outcome."' } },
-      { kind: 'quote', title: { fr: "« Il faut apprendre toute sa vie. Tôt couché, tôt levé, et beaucoup lire. »", en: '"Live a life of continuous learning. Read a lot, and go to bed a little wiser each day."' }, attribution: 'Charlie Munger' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "La rationalité est un devoir moral. Deviens un peu plus sage chaque jour, et évite surtout les grandes bêtises.", en: 'Rationality is a moral duty. Grow a little wiser each day, and above all avoid the big, dumb mistakes.' } },
-    ],
+    "glyph": "🦉",
+    "readTime": "10 h"
   },
   {
-    id: 'stubborn-attachments',
-    title: 'Stubborn Attachments',
-    author: 'Tyler Cowen',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: 'Pourquoi la croissance économique est un impératif moral. 🌍',
-      en: 'Why economic growth is a moral imperative. 🌍',
+    "id": "stubborn-attachments",
+    "title": "Stubborn Attachments",
+    "author": "Tyler Cowen",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#059669",
+      "to": "#064e3b",
+      "text": "#ecfdf5"
     },
-    tags: ['economics', 'growth', 'ethics', 'longterm'],
-    theme: { from: '#059669', to: '#064e3b', text: '#ecfdf5' },
-    glyph: '📊',
-    readTime: '3 h',
-    likes: 11230,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'Stubborn Attachments', body: { fr: 'Une vision de la société prospère, libre et responsable — Tyler Cowen', en: 'A vision for a society of free, prosperous, and responsible individuals — Tyler Cowen' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'La croissance composée est morale', en: 'Compounding growth is moral' }, body: { fr: "Un point de croissance en plus, composé sur des décennies, sort des millions de la pauvreté. Le long terme domine tout calcul.", en: 'One extra point of growth, compounded over decades, lifts millions out of poverty. The long run dominates every calculation.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Ne dévalorise pas le futur', en: "Don't discount the future" }, body: { fr: "Un taux d'actualisation élevé revient à dire que les générations futures comptent moins. Cowen refuse : leur bien-être pèse autant que le nôtre.", en: 'A high discount rate says future generations matter less. Cowen refuses: their wellbeing weighs as much as ours.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Le « Wealth Plus »', en: 'The "Wealth Plus"' }, body: { fr: "Vise la richesse au sens large : PIB + loisir + environnement + bien-être — pas seulement le chiffre économique brut.", en: 'Aim for wealth broadly defined: GDP + leisure + environment + wellbeing — not just the raw economic number.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Les droits comme garde-fous', en: 'Rights as guardrails' }, body: { fr: "La croissance ne justifie pas d'écraser des individus. Certains droits humains sont des contraintes absolues, non négociables.", en: 'Growth never justifies crushing individuals. Some human rights are absolute, non-negotiable constraints.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Fais des choses durables. Face à l'incertitude, l'action qui augmente la prospérité de long terme est presque toujours la bonne.", en: 'Do sustainable things. Under uncertainty, the action that raises long-term prosperity is almost always the right one.' } },
-    ],
+    "glyph": "📊",
+    "readTime": "3 h"
   },
   {
-    id: 'where-is-my-flying-car',
-    title: 'Where Is My Flying Car?',
-    author: 'J. Storrs Hall',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: "Où est passé le futur qu'on nous avait promis ? 🚗✈️",
-      en: 'Where did the future we were promised go? 🚗✈️',
+    "id": "where-is-my-flying-car",
+    "title": "Where Is My Flying Car?",
+    "author": "J. Storrs Hall",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#4338ca",
+      "to": "#1e1b4b",
+      "text": "#eef2ff"
     },
-    tags: ['progress', 'energy', 'innovation', 'technology'],
-    theme: { from: '#4338ca', to: '#1e1b4b', text: '#eef2ff' },
-    glyph: '🛸',
-    readTime: '7 h',
-    likes: 14560,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'Where Is My Flying Car?', body: { fr: 'Enquête sur la Grande Stagnation — J. Storrs Hall', en: 'A memoir of future past — J. Storrs Hall' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: "La courbe d'Henry Adams", en: "The Henry Adams curve" }, body: { fr: "Pendant 200 ans, notre consommation d'énergie par tête a doublé régulièrement. Vers 1970, la courbe s'est cassée. Le progrès a ralenti avec elle.", en: 'For 200 years, energy use per capita doubled steadily. Around 1970 the curve broke. Progress slowed along with it.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: '« Ergophobie »', en: '"Ergophobia"' }, body: { fr: "Une peur culturelle de l'énergie abondante (nucléaire en tête) a bridé l'innovation. Moins d'énergie = moins de futur.", en: 'A cultural fear of abundant energy (nuclear above all) throttled innovation. Less energy = less future.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Le poids de la régulation', en: 'The weight of regulation' }, body: { fr: "L'accumulation de normes et de procès a rendu les projets ambitieux quasi impossibles. On construit moins, plus cher, plus lentement.", en: 'Piled-up rules and litigation made ambitious projects nearly impossible. We build less, at higher cost, more slowly.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Le futur était techniquement possible', en: 'The future was technically possible' }, body: { fr: "La voiture volante n'était pas un rêve absurde : les prototypes existaient. Ce sont les choix sociaux et énergétiques qui l'ont enterrée.", en: 'The flying car wasn’t an absurd dream: prototypes existed. Social and energy choices are what buried it.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "La stagnation n'est pas une fatalité technologique mais un choix. Retrouver l'ambition énergétique, c'est rouvrir le futur.", en: 'Stagnation isn’t a technological fate but a choice. Reclaiming energy ambition reopens the future.' } },
-    ],
+    "glyph": "🛸",
+    "readTime": "7 h"
   },
   {
-    id: 'art-of-doing-science',
-    title: 'The Art of Doing Science and Engineering',
-    author: 'Richard Hamming',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: 'Comment faire un travail qui compte vraiment. 🔬',
-      en: 'How to do work that truly matters. 🔬',
+    "id": "art-of-doing-science",
+    "title": "The Art of Doing Science and Engineering",
+    "author": "Richard Hamming",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#0f172a",
+      "to": "#020617",
+      "text": "#f8fafc"
     },
-    tags: ['research', 'career', 'learning', 'excellence'],
-    theme: { from: '#0f172a', to: '#020617', text: '#f8fafc' },
-    glyph: '🎓',
-    readTime: '9 h',
-    likes: 19870,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'The Art of Doing Science and Engineering', body: { fr: 'Apprendre à apprendre — Richard Hamming', en: 'Learning to learn — Richard Hamming' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Travaille sur les problèmes importants', en: 'Work on important problems' }, body: { fr: "« Si ce que tu fais n'est pas important, pourquoi le fais-tu ? » La plupart des chercheurs évitent les grands problèmes par peur de l'échec.", en: '"If what you’re doing isn’t important, why are you doing it?" Most researchers avoid the big problems out of fear of failure.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'La porte ouverte', en: 'The open door' }, body: { fr: "Ceux qui travaillent porte fermée sont plus productifs à court terme, mais ceux qui la laissent ouverte font le travail qui compte à long terme.", en: 'Those who work behind a closed door are more productive short term, but those who leave it open do the work that matters long term.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "Le composé de l'effort quotidien", en: 'The compounding of daily effort' }, body: { fr: "Un peu plus d'effort et de réflexion chaque jour, composés sur une carrière, séparent le grand du médiocre. La constance bat le talent brut.", en: 'A little more effort and thought each day, compounded over a career, separates the great from the mediocre. Consistency beats raw talent.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: "Tolère l'ambiguïté", en: 'Tolerate ambiguity' }, body: { fr: "Les grands scientifiques croient assez à leur théorie pour avancer, mais doutent assez pour voir ses failles. Tenir les deux à la fois.", en: 'Great scientists believe their theory enough to push forward, yet doubt it enough to see its flaws. Hold both at once.' } },
-      { kind: 'quote', title: { fr: '« La chance favorise les esprits préparés. »', en: '"Luck favors the prepared mind."' }, attribution: { fr: "Richard Hamming (d'après Pasteur)", en: 'Richard Hamming (after Pasteur)' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Gère ta carrière comme un projet. Choisis de grands problèmes, prépare-toi à la chance, et vis en visant l'excellence, pas le confort.", en: 'Manage your career like a project. Pick big problems, prepare for luck, and live aiming for excellence, not comfort.' } },
-    ],
+    "glyph": "🎓",
+    "readTime": "9 h"
   },
   {
-    id: 'get-together',
-    title: 'Get Together',
-    author: 'Richardson, Huynh & Sotto',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: 'Construire une communauté AVEC les gens, pas POUR eux. 🤝',
-      en: 'Build a community WITH people, not FOR them. 🤝',
+    "id": "get-together",
+    "title": "Get Together",
+    "author": "Richardson, Huynh & Sotto",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#db2777",
+      "to": "#831843",
+      "text": "#fdf2f8"
     },
-    tags: ['community', 'belonging', 'movements', 'growth'],
-    theme: { from: '#db2777', to: '#831843', text: '#fdf2f8' },
-    glyph: '🔥',
-    readTime: '3 h',
-    likes: 12680,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'Get Together', body: { fr: 'Comment bâtir une communauté avec ses membres — Bailey Richardson, Kevin Huynh & Kai Elmer Sotto', en: 'How to build a community with your people — Bailey Richardson, Kevin Huynh & Kai Elmer Sotto' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Avec, pas pour', en: 'With, not for' }, body: { fr: "Une communauté ne se fabrique pas pour un public passif. Elle se co-crée avec des membres qui deviennent acteurs.", en: 'A community isn’t built for a passive audience. It’s co-created with members who become participants.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Trouve ta première étincelle', en: 'Find your first spark' }, body: { fr: "Cherche les gens déjà passionnés par ton sujet. Ne pars pas de zéro : réunis ceux qui brûlaient déjà seuls dans leur coin.", en: 'Look for people already passionate about your topic. Don’t start from zero: gather those who were already burning alone.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Fais participer, ne diffuse pas', en: 'Invite participation, don’t broadcast' }, body: { fr: "Passe du « regarde ce que j'ai fait » au « fais-le avec moi ». La participation crée l'appartenance.", en: 'Move from "look what I made" to "do it with me." Participation creates belonging.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Les leaders se cultivent', en: 'Leaders are cultivated' }, body: { fr: "Repère tes membres les plus actifs et donne-leur des responsabilités. Une communauté qui dure se dirige par plusieurs, pas par un seul.", en: 'Spot your most active members and give them responsibility. A lasting community is led by many, not one.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Demande sans cesse « pourquoi on se réunit ? ». Un but partagé et clair est le vrai ciment d'une communauté durable.", en: 'Keep asking "why do we gather?" A clear, shared purpose is the real glue of a lasting community.' } },
-    ],
+    "glyph": "🔥",
+    "readTime": "3 h"
   },
   {
-    id: 'the-dream-machine',
-    title: 'The Dream Machine',
-    author: 'M. Mitchell Waldrop',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: "L'homme qui a rêvé l'ordinateur personnel avant tout le monde. 💻",
-      en: 'The man who dreamed of the personal computer before anyone else. 💻',
+    "id": "the-dream-machine",
+    "title": "The Dream Machine",
+    "author": "M. Mitchell Waldrop",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#0d9488",
+      "to": "#134e4a",
+      "text": "#f0fdfa"
     },
-    tags: ['history', 'computing', 'vision', 'research'],
-    theme: { from: '#0d9488', to: '#134e4a', text: '#f0fdfa' },
-    glyph: '🖥️',
-    readTime: '12 h',
-    likes: 10940,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'The Dream Machine', body: { fr: "J.C.R. Licklider et la révolution qui a rendu l'informatique personnelle — M. Mitchell Waldrop", en: 'J.C.R. Licklider and the revolution that made computing personal — M. Mitchell Waldrop' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'La symbiose homme-machine', en: 'Human-machine symbiosis' }, body: { fr: "Dès 1960, Licklider imagine l'ordinateur non comme une calculatrice, mais comme un partenaire de pensée. Une vision 20 ans en avance.", en: 'As early as 1960, Licklider imagined the computer not as a calculator but as a thinking partner. A vision 20 years ahead.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Financer les gens, pas les projets', en: 'Fund people, not projects' }, body: { fr: "À l'ARPA, Licklider misait sur des chercheurs brillants avec une grande liberté. Cette confiance a produit internet, la souris, l'interface graphique.", en: 'At ARPA, Licklider bet on brilliant researchers with great freedom. That trust produced the internet, the mouse, the GUI.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Les réseaux de talents', en: 'Networks of talent' }, body: { fr: "Le progrès vient de communautés reliées : ARPANET a d'abord servi à connecter les chercheurs entre eux avant de connecter le monde.", en: 'Progress comes from connected communities: ARPANET first linked researchers to each other before linking the world.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'La vision précède la technologie', en: 'Vision precedes technology' }, body: { fr: "Presque tout l'informatique moderne existait comme idée avant d'être possible. La bonne vision oriente des décennies de travail.", en: 'Almost all of modern computing existed as an idea before it was possible. The right vision steers decades of work.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Les grandes révolutions naissent d'une vision claire + de moyens patients + de gens libres. Un modèle pour toute R&D ambitieuse.", en: 'Great revolutions come from a clear vision + patient funding + free people. A blueprint for any ambitious R&D.' } },
-    ],
+    "glyph": "🖥️",
+    "readTime": "12 h"
   },
   {
-    id: 'making-of-prince-of-persia',
-    title: 'The Making of Prince of Persia',
-    author: 'Jordan Mechner',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: "Les carnets intimes du créateur d'un jeu culte. 🎮",
-      en: 'The private journals of the creator of a cult game. 🎮',
+    "id": "making-of-prince-of-persia",
+    "title": "The Making of Prince of Persia",
+    "author": "Jordan Mechner",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#c2410c",
+      "to": "#7c2d12",
+      "text": "#fff7ed"
     },
-    tags: ['creativity', 'craft', 'gamedev', 'persistence'],
-    theme: { from: '#c2410c', to: '#7c2d12', text: '#fff7ed' },
-    glyph: '🗡️',
-    readTime: '6 h',
-    likes: 13320,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'The Making of Prince of Persia', body: { fr: 'Journaux 1985-1993 — Jordan Mechner', en: 'Journals 1985-1993 — Jordan Mechner' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Le doute accompagne la création', en: 'Doubt travels with creation' }, body: { fr: "Même en créant un chef-d'œuvre, Mechner doute constamment. Le doute n'est pas un signe d'échec : c'est le compagnon normal de tout projet ambitieux.", en: 'Even while creating a masterpiece, Mechner doubts constantly. Doubt isn’t a sign of failure: it’s the normal companion of any ambitious project.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'La rotoscopie : voler le réel', en: 'Rotoscoping: steal from reality' }, body: { fr: "Il a filmé son frère courant et sautant pour animer le prince. L'innovation vient souvent d'importer une technique d'un autre domaine.", en: 'He filmed his brother running and jumping to animate the prince. Innovation often comes from importing a technique from another field.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Finir est plus dur que commencer', en: 'Finishing is harder than starting' }, body: { fr: "Le projet a traîné des années, tenté par d'autres envies (cinéma, voyages). Le vrai talent, c'est de terminer.", en: 'The project dragged on for years, tempted by other pursuits (film, travel). The real talent is finishing.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'La vie continue autour du travail', en: 'Life goes on around the work' }, body: { fr: "Ses carnets mêlent code, amours, deuils, ambitions. Un rappel : une œuvre naît d'une vie entière, pas d'un tunnel isolé.", en: 'His journals blend code, love, grief, ambition. A reminder: a work is born from a whole life, not an isolated tunnel.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Tiens un journal. Le processus créatif est chaotique et non-linéaire — le documenter aide à traverser le doute et à finir.", en: 'Keep a journal. The creative process is chaotic and non-linear — documenting it helps you push through doubt and finish.' } },
-    ],
+    "glyph": "🗡️",
+    "readTime": "6 h"
   },
   {
-    id: 'the-man-from-the-future',
-    title: 'The Man from the Future',
-    author: 'Ananyo Bhattacharya',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: "John von Neumann : l'esprit qui a inventé notre monde. 🧮",
-      en: 'John von Neumann: the mind that invented our world. 🧮',
+    "id": "the-man-from-the-future",
+    "title": "The Man from the Future",
+    "author": "Ananyo Bhattacharya",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#4f46e5",
+      "to": "#312e81",
+      "text": "#eef2ff"
     },
-    tags: ['genius', 'science', 'computing', 'gametheory'],
-    theme: { from: '#4f46e5', to: '#312e81', text: '#eef2ff' },
-    glyph: '♟️',
-    readTime: '8 h',
-    likes: 11510,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'The Man from the Future', body: { fr: 'La vie visionnaire de John von Neumann — Ananyo Bhattacharya', en: 'The visionary life of John von Neumann — Ananyo Bhattacharya' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Un esprit multi-domaines', en: 'A multi-domain mind' }, body: { fr: "Von Neumann a marqué les maths, la physique quantique, l'informatique, l'économie et la biologie. La transversalité comme moteur de génie.", en: 'Von Neumann shaped math, quantum physics, computing, economics and biology. Cross-disciplinary breadth as the engine of genius.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: "L'architecture qui porte son nom", en: 'The architecture that bears his name' }, body: { fr: "Le principe « programme stocké en mémoire » structure encore quasiment tous nos ordinateurs. Une abstraction qui a traversé 75 ans.", en: 'The "stored-program" principle still structures nearly every computer we use. An abstraction that has lasted 75 years.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'La théorie des jeux', en: 'Game theory' }, body: { fr: "Il a fondé l'analyse mathématique des décisions stratégiques — outil aujourd'hui central en économie, biologie et IA.", en: 'He founded the mathematical analysis of strategic decisions — now central to economics, biology and AI.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Les automates auto-reproducteurs', en: 'Self-replicating automata' }, body: { fr: "Avant l'ADN décodé, il théorise des machines capables de se copier — préfigurant à la fois la biologie et les nanotechnologies.", en: 'Before DNA was decoded, he theorized machines that copy themselves — foreshadowing both biology and nanotechnology.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "La vraie puissance intellectuelle vient de connecter des domaines que personne ne relie. Cultive l'ampleur autant que la profondeur.", en: 'Real intellectual power comes from connecting fields no one else links. Cultivate breadth as much as depth.' } },
-    ],
+    "glyph": "♟️",
+    "readTime": "8 h"
   },
   {
-    id: 'pieces-of-the-action',
-    title: 'Pieces of the Action',
-    author: 'Vannevar Bush',
-    publisher: 'Stripe Press',
-    handle: 'stripepress',
-    caption: {
-      fr: "L'homme qui a organisé la science américaine raconte comment agir. 🏛️",
-      en: 'The man who organized American science on how to get things done. 🏛️',
+    "id": "pieces-of-the-action",
+    "title": "Pieces of the Action",
+    "author": "Vannevar Bush",
+    "publisher": "Stripe Press",
+    "handle": "stripepress",
+    "theme": {
+      "from": "#334155",
+      "to": "#0f172a",
+      "text": "#f1f5f9"
     },
-    tags: ['science', 'organization', 'leadership', 'action'],
-    theme: { from: '#334155', to: '#0f172a', text: '#f1f5f9' },
-    glyph: '📐',
-    readTime: '9 h',
-    likes: 8720,
-    slides: [
-      { kind: 'cover', eyebrow: 'STRIPE PRESS', title: 'Pieces of the Action', body: { fr: "Mémoires sur l'art de faire avancer les grandes choses — Vannevar Bush", en: 'A memoir on the art of getting great things done — Vannevar Bush' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Naviguer les organisations', en: 'Navigate organizations' }, body: { fr: "Bush a dirigé l'effort scientifique US pendant la 2e guerre. Sa leçon : savoir manœuvrer dans la bureaucratie est aussi vital que l'idée elle-même.", en: 'Bush led the US scientific effort in WWII. His lesson: maneuvering through bureaucracy is as vital as the idea itself.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Protéger les chercheurs', en: 'Shield the researchers' }, body: { fr: "Il a bâti des structures qui isolaient les scientifiques de la paperasse pour les laisser créer. Le rôle du dirigeant : enlever les obstacles.", en: 'He built structures that shielded scientists from paperwork so they could create. The leader’s job: remove the obstacles.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Décider avec des faits incomplets', en: 'Decide on incomplete facts' }, body: { fr: "Attendre la certitude, c'est arriver trop tard. Il faut agir sur le meilleur jugement disponible, puis corriger.", en: 'Waiting for certainty means arriving too late. Act on the best available judgment, then correct.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: "La liberté nourrit l'invention", en: 'Freedom feeds invention' }, body: { fr: "Les percées viennent de la curiosité libre, pas des commandes. Bush a défendu la recherche fondamentale financée sans but immédiat.", en: 'Breakthroughs come from free curiosity, not orders. Bush championed basic research funded with no immediate goal.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Faire avancer les choses, c'est autant de la politique organisationnelle que de la brillance. Apprends à faire bouger les institutions.", en: 'Getting things done is as much organizational politics as brilliance. Learn to move institutions.' } },
-    ],
+    "glyph": "📐",
+    "readTime": "9 h"
   },
-
-  // ─────────────────────────  CLASSIQUES STARTUP  ─────────────────────────
   {
-    id: 'the-lean-startup',
-    title: 'The Lean Startup',
-    author: 'Eric Ries',
-    publisher: 'Startup Classics',
-    handle: 'startupclassics',
-    caption: {
-      fr: 'Construire, mesurer, apprendre — le socle de toute startup moderne. 🔁',
-      en: 'Build, measure, learn — the bedrock of every modern startup. 🔁',
+    "id": "the-lean-startup",
+    "title": "The Lean Startup",
+    "author": "Eric Ries",
+    "publisher": "Startup Classics",
+    "handle": "startupclassics",
+    "theme": {
+      "from": "#16a34a",
+      "to": "#14532d",
+      "text": "#f0fdf4"
     },
-    tags: ['lean', 'mvp', 'validation', 'iteration'],
-    theme: { from: '#16a34a', to: '#14532d', text: '#f0fdf4' },
-    glyph: '🔁',
-    readTime: '6 h',
-    likes: 32100,
-    slides: [
-      { kind: 'cover', eyebrow: 'STARTUP CLASSICS', title: 'The Lean Startup', body: { fr: "Adoptez l'innovation continue — Eric Ries", en: 'Embrace continuous innovation — Eric Ries' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'La boucle Build-Measure-Learn', en: 'The Build-Measure-Learn loop' }, body: { fr: "Transforme les idées en produits, mesure la réaction des clients, apprends s'il faut pivoter ou persévérer. Répète le plus vite possible.", en: 'Turn ideas into products, measure customers’ reaction, learn whether to pivot or persevere. Repeat as fast as possible.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Le MVP', en: 'The MVP' }, body: { fr: "Le produit minimum viable est la plus petite chose qui permet de boucler un cycle d'apprentissage. Pas le plus petit produit — le plus rapide à enseigner.", en: 'The minimum viable product is the smallest thing that completes one learning cycle. Not the smallest product — the fastest to teach you.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Métriques actionnables vs. vanité', en: 'Actionable vs. vanity metrics' }, body: { fr: "Les téléchargements et les vues flattent l'ego. Suis plutôt la rétention, la conversion, le comportement de cohortes.", en: 'Downloads and views flatter the ego. Track retention, conversion, and cohort behavior instead.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Pivoter ou persévérer', en: 'Pivot or persevere' }, body: { fr: "Un pivot est un changement de stratégie sans changer de vision. Le décider tôt et sans ego économise des années.", en: 'A pivot is a change of strategy without a change of vision. Deciding early and without ego saves years.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "L'objectif d'une startup n'est pas de produire, mais d'apprendre à construire une entreprise viable — le plus vite possible.", en: 'A startup’s goal isn’t to produce, but to learn how to build a viable business — as fast as possible.' } },
-    ],
+    "glyph": "🔁",
+    "readTime": "6 h"
   },
   {
-    id: 'zero-to-one',
-    title: 'Zero to One',
-    author: 'Peter Thiel',
-    publisher: 'Startup Classics',
-    handle: 'startupclassics',
-    caption: {
-      fr: 'Créer du neuf (0→1) plutôt que copier (1→n). 🎯',
-      en: 'Create something new (0→1) instead of copying (1→n). 🎯',
+    "id": "zero-to-one",
+    "title": "Zero to One",
+    "author": "Peter Thiel",
+    "publisher": "Startup Classics",
+    "handle": "startupclassics",
+    "theme": {
+      "from": "#111827",
+      "to": "#000000",
+      "text": "#f9fafb"
     },
-    tags: ['monopoly', 'contrarian', 'vision', 'strategy'],
-    theme: { from: '#111827', to: '#000000', text: '#f9fafb' },
-    glyph: '①',
-    readTime: '5 h',
-    likes: 41200,
-    slides: [
-      { kind: 'cover', eyebrow: 'STARTUP CLASSICS', title: 'Zero to One', body: { fr: 'Notes sur les startups, ou comment bâtir le futur — Peter Thiel', en: 'Notes on startups, or how to build the future — Peter Thiel' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: '0→1, pas 1→n', en: '0→1, not 1→n' }, body: { fr: "Copier ce qui marche mène de 1 à n. La vraie création va de 0 à 1 : faire ce que personne n'a jamais fait.", en: 'Copying what works takes you from 1 to n. True creation goes from 0 to 1: doing what no one has ever done.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Vise le monopole', en: 'Aim for monopoly' }, body: { fr: "La concurrence détruit les profits. Construis un monopole sur un petit marché que tu domines, puis élargis.", en: 'Competition destroys profits. Build a monopoly in a small market you dominate, then expand.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'La question contrarienne', en: 'The contrarian question' }, body: { fr: "« Sur quelle vérité importante peu de gens sont-ils d'accord avec toi ? » Les grandes entreprises naissent d'un secret que les autres ignorent.", en: '"What important truth do very few people agree with you on?" Great companies are born from a secret others ignore.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Commence petit et monopolise', en: 'Start small and monopolize' }, body: { fr: "Domine une niche minuscule où tu peux être n°1, comme PayPal chez les vendeurs eBay, avant de t'étendre.", en: 'Dominate a tiny niche where you can be #1, like PayPal among eBay sellers, before expanding.' } },
-      { kind: 'quote', title: { fr: '« La prochaine Google ne fera pas un moteur de recherche. »', en: '"The next Google won’t make a search engine."' }, attribution: 'Peter Thiel' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Un plan audacieux mais précis bat un optimisme vague. Aie une vision claire du futur que toi seul peux construire.", en: 'A bold but definite plan beats vague optimism. Have a clear vision of the future only you can build.' } },
-    ],
+    "glyph": "①",
+    "readTime": "5 h"
   },
   {
-    id: 'hard-thing-about-hard-things',
-    title: 'The Hard Thing About Hard Things',
-    author: 'Ben Horowitz',
-    publisher: 'Startup Classics',
-    handle: 'startupclassics',
-    caption: {
-      fr: 'Ce que personne ne te dit sur diriger dans la tempête. ⚔️',
-      en: 'What nobody tells you about leading through the storm. ⚔️',
+    "id": "hard-thing-about-hard-things",
+    "title": "The Hard Thing About Hard Things",
+    "author": "Ben Horowitz",
+    "publisher": "Startup Classics",
+    "handle": "startupclassics",
+    "theme": {
+      "from": "#1e293b",
+      "to": "#0c0a09",
+      "text": "#f8fafc"
     },
-    tags: ['leadership', 'crisis', 'ceo', 'grit'],
-    theme: { from: '#1e293b', to: '#0c0a09', text: '#f8fafc' },
-    glyph: '⚔️',
-    readTime: '7 h',
-    likes: 29800,
-    slides: [
-      { kind: 'cover', eyebrow: 'STARTUP CLASSICS', title: 'The Hard Thing About Hard Things', body: { fr: "Diriger quand il n'y a pas de bonne réponse — Ben Horowitz", en: 'Building a business when there are no easy answers — Ben Horowitz' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: "Il n'y a pas de recette", en: 'There is no recipe' }, body: { fr: "Les livres de management enseignent comment bien faire. Personne n'enseigne quoi faire quand tout s'effondre. Là, tu es seul avec le problème.", en: 'Management books teach how to do things right. No one teaches what to do when everything collapses. There, you’re alone with the problem.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Le Struggle', en: 'The Struggle' }, body: { fr: "Le « Struggle », c'est quand tu doutes de tout et que ton corps veut fuir. Tous les grands fondateurs le traversent. Tu n'es pas seul, et ça ne dure pas.", en: 'The Struggle is when you doubt everything and your body wants to run. Every great founder goes through it. You’re not alone, and it doesn’t last.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Dis la vérité à ton équipe', en: 'Tell your team the truth' }, body: { fr: "En crise, ne dore pas la pilule. Les gens supportent les mauvaises nouvelles ; ils ne supportent pas d'être trahis par le silence.", en: 'In a crisis, don’t sugarcoat. People can handle bad news; they can’t handle being betrayed by silence.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Les gens, le produit, les profits — dans cet ordre', en: 'People, product, profit — in that order' }, body: { fr: "Si les gens vont bien et te font confiance, ils règleront le produit et les profits. L'inverse n'est pas vrai.", en: 'If the people are well and trust you, they’ll fix the product and the profits. The reverse isn’t true.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Un fondateur ne gagne pas en évitant les coups, mais en encaissant plus longtemps que les autres. Focus sur le prochain pas, pas sur le gouffre.", en: 'A founder wins not by dodging blows but by absorbing them longer than everyone else. Focus on the next step, not the chasm.' } },
-    ],
+    "glyph": "⚔️",
+    "readTime": "7 h"
   },
   {
-    id: 'the-mom-test',
-    title: 'The Mom Test',
-    author: 'Rob Fitzpatrick',
-    publisher: 'Startup Classics',
-    handle: 'startupclassics',
-    caption: {
-      fr: 'Comment parler à tes clients sans te mentir à toi-même. 🎤',
-      en: 'How to talk to customers without lying to yourself. 🎤',
+    "id": "the-mom-test",
+    "title": "The Mom Test",
+    "author": "Rob Fitzpatrick",
+    "publisher": "Startup Classics",
+    "handle": "startupclassics",
+    "theme": {
+      "from": "#0891b2",
+      "to": "#164e63",
+      "text": "#ecfeff"
     },
-    tags: ['customers', 'discovery', 'interviews', 'validation'],
-    theme: { from: '#0891b2', to: '#164e63', text: '#ecfeff' },
-    glyph: '🎤',
-    readTime: '2 h',
-    likes: 22400,
-    slides: [
-      { kind: 'cover', eyebrow: 'STARTUP CLASSICS', title: 'The Mom Test', body: { fr: 'Parler aux clients quand tout le monde te ment — Rob Fitzpatrick', en: 'How to talk to customers when everyone is lying to you — Rob Fitzpatrick' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Ne parle jamais de ton idée', en: 'Never talk about your idea' }, body: { fr: "Si tu mentionnes ton idée, tout le monde ment pour être gentil. Parle de LEUR vie et de leurs problèmes, pas de ta solution.", en: 'If you mention your idea, everyone lies to be nice. Talk about THEIR life and problems, not your solution.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Passé concret, pas futur hypothétique', en: 'Concrete past, not hypothetical future' }, body: { fr: "« Achèteriez-vous ceci ? » ne vaut rien. « Comment avez-vous résolu ça la dernière fois ? » révèle la vérité.", en: '"Would you buy this?" is worthless. "How did you solve this last time?" reveals the truth.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Les compliments sont des déchets', en: 'Compliments are worthless' }, body: { fr: "« J'adore ! » ne prouve rien. Cherche des faits : temps perdu, argent dépensé, solutions bricolées.", en: '"I love it!" proves nothing. Look for facts: time lost, money spent, workarounds hacked together.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: "Cherche l'engagement, pas la politesse", en: 'Seek commitment, not politeness' }, body: { fr: "Le vrai signal d'intérêt : ils te donnent du temps, une intro, ou de l'argent. Le reste n'est que courtoisie.", en: 'The real signal of interest: they give you time, an intro, or money. Everything else is just courtesy.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Les bonnes questions client passeraient « le test de la maman » : même ta mère ne pourrait pas te mentir en y répondant.", en: 'Good customer questions pass "the mom test": even your mom couldn’t lie to you while answering them.' } },
-    ],
+    "glyph": "🎤",
+    "readTime": "2 h"
   },
   {
-    id: 'founders-at-work',
-    title: 'Founders at Work',
-    author: 'Jessica Livingston',
-    publisher: 'Startup Classics',
-    handle: 'startupclassics',
-    caption: {
-      fr: 'Les vraies histoires des débuts, avant le succès. 🌱',
-      en: 'The real stories of the early days, before the success. 🌱',
+    "id": "founders-at-work",
+    "title": "Founders at Work",
+    "author": "Jessica Livingston",
+    "publisher": "Startup Classics",
+    "handle": "startupclassics",
+    "theme": {
+      "from": "#ca8a04",
+      "to": "#713f12",
+      "text": "#fefce8"
     },
-    tags: ['founders', 'earlydays', 'resilience', 'stories'],
-    theme: { from: '#ca8a04', to: '#713f12', text: '#fefce8' },
-    glyph: '📖',
-    readTime: '10 h',
-    likes: 15600,
-    slides: [
-      { kind: 'cover', eyebrow: 'STARTUP CLASSICS', title: 'Founders at Work', body: { fr: 'Récits des premiers jours des startups — Jessica Livingston', en: 'Stories of startups’ early days — Jessica Livingston' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Le début est toujours chaotique', en: 'The beginning is always chaotic' }, body: { fr: "Derrière chaque géant, des débuts brouillons : pivots, presque-faillites, produits ratés. Le succès paraît inévitable seulement après coup.", en: 'Behind every giant are messy beginnings: pivots, near-bankruptcies, failed products. Success only looks inevitable in hindsight.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'La ténacité par-dessus tout', en: 'Tenacity above all' }, body: { fr: "Le trait commun des fondateurs : ils refusent d'abandonner. Ils encaissent les « non » et continuent quand tout dit d'arrêter.", en: 'The founders’ common trait: they refuse to quit. They absorb the "no"s and keep going when everything says stop.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "S'adapter à l'imprévu", en: 'Adapt to the unexpected' }, body: { fr: "Presque aucune startup n'a réussi avec son idée de départ. La flexibilité face au réel bat le plan parfait.", en: 'Almost no startup succeeded with its original idea. Flexibility in the face of reality beats the perfect plan.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Rester proche du produit et du client', en: 'Stay close to product and customer' }, body: { fr: "Les fondateurs qui gagnent parlent aux utilisateurs et touchent au produit longtemps, même à grande échelle.", en: 'Winning founders keep talking to users and touching the product for a long time, even at scale.' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Ton chaos actuel est normal. Chaque entreprise admirée est passée par là. Continue, adapte-toi, reste proche du réel.", en: 'Your current chaos is normal. Every company you admire went through it. Keep going, adapt, stay close to reality.' } },
-    ],
+    "glyph": "📖",
+    "readTime": "10 h"
   },
-
-  // ─────────────────  AUTOBIOGRAPHIES & MÉMOIRES / LIFE STORIES  ─────────────────
   {
-    id: 'shoe-dog',
-    title: 'Shoe Dog',
-    author: 'Phil Knight',
-    publisher: { fr: 'Autobiographie', en: 'Memoir' },
-    handle: 'philknight',
-    caption: {
-      fr: "Comment Nike est née d'une « idée folle » et d'un coffre de voiture. 👟",
-      en: 'How Nike was born from a "crazy idea" and a car trunk. 👟',
+    "id": "shoe-dog",
+    "title": "Shoe Dog",
+    "author": "Phil Knight",
+    "publisher": {
+      "fr": "Autobiographie",
+      "en": "Memoir"
     },
-    tags: ['nike', 'perseverance', 'founder', 'grit'],
-    theme: { from: '#ea580c', to: '#7c2d12', text: '#fff7ed' },
-    glyph: '👟',
-    readTime: '9 h',
-    likes: 34120,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'AUTOBIOGRAPHIE', en: 'MEMOIR' }, title: 'Shoe Dog', body: { fr: 'Les mémoires du créateur de Nike — Phil Knight', en: 'A memoir by the creator of Nike — Phil Knight' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: "La « Crazy Idea »", en: 'The "Crazy Idea"' }, body: { fr: "À 24 ans, après un tour du monde, Knight rêve d'importer aux USA des chaussures japonaises bon marché et de qualité. Personne n'y croit.", en: 'At 24, after backpacking the world, Knight dreams of importing cheap, quality Japanese running shoes to the US. Nobody believes in it.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'Le bluff de Kobe', en: 'The bluff in Kobe' }, body: { fr: "Sans société, il se présente chez Onitsuka (Tiger) au Japon et invente sur-le-champ un nom, « Blue Ribbon Sports », pour décrocher la distribution.", en: 'With no company, he pitches Onitsuka (Tiger) in Japan and invents a name on the spot — "Blue Ribbon Sports" — to win the distribution deal.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Vendre depuis son coffre', en: 'Selling from his trunk' }, body: { fr: "Il vend les Tiger sur les meetings d'athlétisme, coffre de sa vieille voiture ouvert, réinvestissant chaque dollar dans la commande suivante.", en: 'He sells Tigers out of his car trunk at track meets, plowing every dollar back into the next order.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: 'La semelle gaufre', en: 'The waffle sole' }, body: { fr: "Son coach Bill Bowerman verse du caoutchouc dans le gaufrier familial pour créer une semelle plus adhérente — la première vraie Nike.", en: 'His coach Bill Bowerman pours rubber into the family waffle iron to create a grippier sole — the first true Nike.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 05', en: 'KEY MOMENT 05' }, title: { fr: 'Au bord du gouffre en permanence', en: 'Always on the brink' }, body: { fr: "Pendant des années, la croissance se fait à crédit ; les banques le lâchent, la faillite le frôle sans cesse. Il n'abandonne jamais.", en: 'For years, growth runs on debt; banks drop him, bankruptcy looms constantly. He never quits.' } },
-      { kind: 'quote', title: { fr: "« N'arrête pas. Ne pense même pas à t'arrêter avant d'être arrivé. »", en: '"Don’t stop. Don’t even think about stopping until you get there."' }, attribution: 'Phil Knight' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Le succès n'est pas une ligne droite. Knight a frôlé la faillite pendant une décennie : c'est la ténacité et l'amour du produit qui l'ont sauvé.", en: 'Success is never a straight line. Knight skirted bankruptcy for a decade — tenacity and love of the product are what saved him.' } },
-    ],
-  },
-  {
-    id: 'made-in-america',
-    title: 'Made in America',
-    author: 'Sam Walton',
-    publisher: { fr: 'Autobiographie', en: 'Memoir' },
-    handle: 'samwalton',
-    caption: {
-      fr: "Le fondateur de Walmart : viser là où personne ne va. 🛒",
-      en: "Walmart's founder: go where no one else goes. 🛒",
+    "handle": "philknight",
+    "theme": {
+      "from": "#ea580c",
+      "to": "#7c2d12",
+      "text": "#fff7ed"
     },
-    tags: ['walmart', 'retail', 'frugality', 'strategy'],
-    theme: { from: '#2563eb', to: '#1e3a8a', text: '#eff6ff' },
-    glyph: '🛒',
-    readTime: '8 h',
-    likes: 19980,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'AUTOBIOGRAPHIE', en: 'MEMOIR' }, title: 'Made in America', body: { fr: 'L\'autobiographie du fondateur de Walmart — Sam Walton', en: 'The autobiography of Walmart’s founder — Sam Walton' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'Le bail perdu', en: 'The lost lease' }, body: { fr: "Son premier magasin devient n°1 de la région… puis il perd le bail, faute d'avoir prévu une clause de renouvellement. Une leçon brutale sur les contrats.", en: 'His first store becomes #1 in the region… then he loses the lease, having failed to secure a renewal clause. A brutal lesson on contracts.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'Le pari des petites villes', en: 'The small-town bet' }, body: { fr: "Pendant que tous visent les grandes villes, Walton ouvre ses magasins dans les petites villes rurales — sans concurrence, il les domine.", en: 'While everyone chases big cities, Walton opens stores in small rural towns — with no competition, he dominates them.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Prix bas obsessionnels', en: 'Obsessive low prices' }, body: { fr: "Sa règle : vends moins cher, vends plus. Marges minces, volumes énormes — une machine qui écrase toute concurrence sur les prix.", en: 'His rule: sell cheaper, sell more. Thin margins, huge volume — a machine that crushes rivals on price.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: 'Piloter pour scouter', en: 'Flying to scout' }, body: { fr: "Il pilote son propre petit avion pour repérer les emplacements et compter les voitures sur les parkings des concurrents.", en: 'He flies his own small plane to scout locations and count cars in competitors’ parking lots.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 05', en: 'KEY MOMENT 05' }, title: { fr: 'Frugalité de milliardaire', en: 'A billionaire’s frugality' }, body: { fr: "Devenu l'homme le plus riche des USA, il roule dans un vieux pick-up et vole en classe éco. La frugalité comme culture d'entreprise.", en: 'As the richest man in America, he drives an old pickup and flies economy. Frugality as company culture.' } },
-      { kind: 'quote', title: { fr: '« Des attentes élevées sont la clé de tout. »', en: '"High expectations are the key to everything."' }, attribution: 'Sam Walton' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Va là où la concurrence n'est pas. Une idée simple, exécutée avec discipline pendant des décennies, bat les stratégies compliquées.", en: 'Go where the competition isn’t. A simple idea executed with discipline over decades beats complicated strategies.' } },
-    ],
+    "glyph": "👟",
+    "readTime": "9 h"
   },
   {
-    id: 'pour-your-heart-into-it',
-    title: 'Pour Your Heart Into It',
-    author: 'Howard Schultz',
-    publisher: { fr: 'Autobiographie', en: 'Memoir' },
-    handle: 'howardschultz',
-    caption: {
-      fr: "Starbucks, ou comment une blessure d'enfance devient une mission. ☕",
-      en: 'Starbucks, or how a childhood wound became a mission. ☕',
+    "id": "made-in-america",
+    "title": "Made in America",
+    "author": "Sam Walton",
+    "publisher": {
+      "fr": "Autobiographie",
+      "en": "Memoir"
     },
-    tags: ['starbucks', 'culture', 'purpose', 'leadership'],
-    theme: { from: '#15803d', to: '#14532d', text: '#f0fdf4' },
-    glyph: '☕',
-    readTime: '7 h',
-    likes: 17640,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'AUTOBIOGRAPHIE', en: 'MEMOIR' }, title: 'Pour Your Heart Into It', body: { fr: 'Comment Starbucks a bâti une entreprise tasse après tasse — Howard Schultz', en: 'How Starbucks built a company one cup at a time — Howard Schultz' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'Le père brisé', en: 'The broken father' }, body: { fr: "Enfant des HLM de Brooklyn, il voit son père se casser la cheville au travail — sans assurance ni indemnités. Ce souvenir hantera toutes ses décisions.", en: 'A kid from the Brooklyn projects, he watches his father break an ankle at work — with no insurance, no compensation. That memory haunts every decision he’ll make.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: "L'épiphanie de Milan", en: 'The Milan epiphany' }, body: { fr: "En voyage à Milan, il découvre les bars à espresso : un « troisième lieu » entre maison et travail. Starbucks ne vendait alors que des grains à emporter.", en: 'On a trip to Milan he discovers espresso bars: a "third place" between home and work. Back then Starbucks only sold beans to take away.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Assurer les temps partiels', en: 'Insuring part-timers' }, body: { fr: "Décision rare et coûteuse : il offre une assurance santé même aux employés à temps partiel. Il n'a pas oublié son père.", en: 'A rare, costly decision: he gives health insurance even to part-time employees. He hasn’t forgotten his father.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: 'Le retour de 2008', en: 'The 2008 return' }, body: { fr: "En pleine crise, il reprend les rênes et ferme temporairement 7 100 cafés pour reformer tous les baristas à l'espresso. Réaffirmer l'obsession de la qualité.", en: 'Amid the crisis he retakes the helm and briefly closes 7,100 stores to retrain every barista on espresso. Reasserting the obsession with quality.' } },
-      { kind: 'quote', title: { fr: '« Le succès est meilleur quand il est partagé. »', en: '"Success is best when it’s shared."' }, attribution: 'Howard Schultz' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Ta blessure d'origine peut devenir ta boussole. Schultz a bâti toute une culture d'entreprise autour d'une injustice vécue enfant.", en: 'Your original wound can become your compass. Schultz built an entire company culture around an injustice he lived as a child.' } },
-    ],
-  },
-  {
-    id: 'losing-my-virginity',
-    title: 'Losing My Virginity',
-    author: 'Richard Branson',
-    publisher: { fr: 'Autobiographie', en: 'Memoir' },
-    handle: 'richardbranson',
-    caption: {
-      fr: "Virgin : dire oui d'abord, apprendre à le faire ensuite. ✈️",
-      en: 'Virgin: say yes first, learn how to do it later. ✈️',
+    "handle": "samwalton",
+    "theme": {
+      "from": "#2563eb",
+      "to": "#1e3a8a",
+      "text": "#eff6ff"
     },
-    tags: ['virgin', 'audacity', 'entrepreneur', 'risk'],
-    theme: { from: '#dc2626', to: '#7f1d1d', text: '#fef2f2' },
-    glyph: '✈️',
-    readTime: '10 h',
-    likes: 21030,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'AUTOBIOGRAPHIE', en: 'MEMOIR' }, title: 'Losing My Virginity', body: { fr: 'Comment j’ai survécu, pris du bon temps et bâti Virgin — Richard Branson', en: 'How I survived, had fun, and made a fortune doing business my way — Richard Branson' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: "Dyslexique, cancre à l'école", en: 'Dyslexic, a poor student' }, body: { fr: "Il quitte l'école à 16 ans. Son directeur lui prédit soit la prison, soit la fortune. Sa dyslexie l'oblige à tout simplifier — un atout plus tard.", en: 'He leaves school at 16. His headmaster predicts he’ll end up in prison — or a millionaire. His dyslexia forces him to simplify everything — an edge later on.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'De Student à Virgin', en: 'From Student to Virgin' }, body: { fr: "Il lance un magazine étudiant, puis vend des disques par correspondance à prix cassés. Le nom « Virgin » ? Parce qu'ils étaient novices en affaires.", en: 'He launches a student magazine, then sells discount records by mail order. The name "Virgin"? Because they were total novices at business.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Le pari Virgin Atlantic', en: 'The Virgin Atlantic bet' }, body: { fr: "Contre l'avis de tous ses associés, il se lance dans l'aviation face à British Airways — avec un seul avion loué pour commencer.", en: 'Against every partner’s advice, he takes on British Airways in aviation — starting with a single leased plane.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: 'Vendre son bébé', en: 'Selling his baby' }, body: { fr: "Pour sauver la compagnie aérienne, il doit vendre Virgin Records — le label qu'il aimait le plus. Choisir l'avenir plutôt que la nostalgie.", en: 'To save the airline, he has to sell Virgin Records — the label he loved most. Choosing the future over nostalgia.' } },
-      { kind: 'quote', title: { fr: "« Au diable, faisons-le ! »", en: '"Screw it, let’s do it."' }, attribution: 'Richard Branson' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Entre dans des secteurs que tu ne connais pas, porté par la curiosité et le refus des règles établies. Puis entoure-toi de gens qui savent.", en: 'Enter industries you don’t know, driven by curiosity and a refusal of the established rules. Then surround yourself with people who do know.' } },
-    ],
+    "glyph": "🛒",
+    "readTime": "8 h"
   },
   {
-    id: 'principles-dalio',
-    title: 'Principles',
-    author: 'Ray Dalio',
-    publisher: { fr: 'Autobiographie', en: 'Memoir' },
-    handle: 'raydalio',
-    caption: {
-      fr: "L'échec qui a failli tout détruire — et l'a rendu meilleur. 🌊",
-      en: 'The failure that nearly destroyed everything — and made him better. 🌊',
+    "id": "pour-your-heart-into-it",
+    "title": "Pour Your Heart Into It",
+    "author": "Howard Schultz",
+    "publisher": {
+      "fr": "Autobiographie",
+      "en": "Memoir"
     },
-    tags: ['bridgewater', 'decisions', 'transparency', 'investing'],
-    theme: { from: '#0e7490', to: '#164e63', text: '#ecfeff' },
-    glyph: '🌊',
-    readTime: '8 h',
-    likes: 26510,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'AUTOBIOGRAPHIE', en: 'MEMOIR' }, title: 'Principles', body: { fr: 'Vie & travail : les principes du fondateur de Bridgewater — Ray Dalio', en: 'Life & work: principles from the founder of Bridgewater — Ray Dalio' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'Bridgewater dans son appartement', en: 'Bridgewater from his apartment' }, body: { fr: "En 1975, il fonde Bridgewater depuis son deux-pièces. Rien ne laisse présager le plus grand hedge fund du monde.", en: 'In 1975 he founds Bridgewater out of his two-bedroom apartment. Nothing hints at the world’s largest hedge fund to come.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: "L'humiliation de 1982", en: 'The 1982 humiliation' }, body: { fr: "Il prédit publiquement une crise économique majeure. Le marché fait l'inverse et grimpe. Il perd presque tout, licencie tout le monde et emprunte à son père.", en: 'He publicly predicts a major economic collapse. The market does the opposite and soars. He loses almost everything, lets everyone go, and borrows from his father.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: "Chercher qui n'est pas d'accord", en: 'Seeking who disagrees' }, body: { fr: "Cette gifle le transforme : il se met à rechercher activement les gens les plus intelligents qui pensent le CONTRAIRE de lui.", en: 'That slap transforms him: he starts actively seeking the smartest people who think the OPPOSITE of him.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: 'La transparence radicale', en: 'Radical transparency' }, body: { fr: "Chez Bridgewater, toutes les réunions sont enregistrées et chacun se note en direct. Écrire ses règles de décision les rend systématiques.", en: 'At Bridgewater every meeting is recorded and everyone rates each other in real time. Writing down decision rules makes them systematic.' } },
-      { kind: 'quote', title: { fr: '« Douleur + Réflexion = Progrès. »', en: '"Pain + Reflection = Progress."' }, attribution: 'Ray Dalio' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Traite chaque échec douloureux comme une donnée. Transforme la leçon en principe réutilisable — tu ne referas plus deux fois la même erreur.", en: 'Treat every painful failure as data. Turn the lesson into a reusable principle — and you won’t make the same mistake twice.' } },
-    ],
-  },
-  {
-    id: 'carnegie-autobiography',
-    title: 'Autobiography of Andrew Carnegie',
-    author: 'Andrew Carnegie',
-    publisher: { fr: 'Autobiographie', en: 'Memoir' },
-    handle: 'andrewcarnegie',
-    caption: {
-      fr: "Du gamin d'usine au roi de l'acier — puis au grand donateur. 🏭",
-      en: 'From mill boy to steel king — then to great philanthropist. 🏭',
+    "handle": "howardschultz",
+    "theme": {
+      "from": "#15803d",
+      "to": "#14532d",
+      "text": "#f0fdf4"
     },
-    tags: ['steel', 'immigrant', 'philanthropy', 'selfmade'],
-    theme: { from: '#b45309', to: '#451a03', text: '#fffbeb' },
-    glyph: '🏭',
-    readTime: '7 h',
-    likes: 12870,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'AUTOBIOGRAPHIE', en: 'MEMOIR' }, title: 'Autobiography of Andrew Carnegie', body: { fr: "L'autobiographie du roi de l'acier — Andrew Carnegie", en: 'The autobiography of the steel king — Andrew Carnegie' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'Bobbin boy à 1,20 $', en: 'Bobbin boy at $1.20' }, body: { fr: "Immigrant écossais arrivé à 12 ans sans le sou, son premier emploi est ouvrier dans une filature pour 1,20 $ par semaine.", en: 'A penniless Scottish immigrant arriving at 12, his first job is a mill worker for $1.20 a week.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'Le télégraphe', en: 'The telegraph' }, body: { fr: "Messager télégraphiste, il apprend à lire le Morse à l'oreille et mémorise toutes les rues de la ville. On le remarque, on le promeut.", en: 'As a telegraph messenger he learns to read Morse by ear and memorizes every street in the city. He gets noticed and promoted.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Le mentor qui change tout', en: 'The mentor who changes everything' }, body: { fr: "Thomas Scott, du Pennsylvania Railroad, le prend sous son aile et lui apprend à investir. Son premier placement lui ouvre les yeux sur le capital.", en: 'Thomas Scott of the Pennsylvania Railroad takes him under his wing and teaches him to invest. His first investment opens his eyes to capital.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: "Le pari sur l'acier", en: 'Betting on steel' }, body: { fr: "Il mise tout sur le procédé Bessemer et bâtit un empire, puis le vend à J.P. Morgan pour une somme record.", en: 'He bets everything on the Bessemer process, builds an empire, then sells it to J.P. Morgan for a record sum.' } },
-      { kind: 'quote', title: { fr: "« L'homme qui meurt riche meurt déshonoré. »", en: '"The man who dies rich dies disgraced."' }, attribution: 'Andrew Carnegie' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Investis d'abord dans ton apprentissage et tes mentors. Pour Carnegie, la vraie réussite fut ensuite de tout redistribuer.", en: 'Invest first in your learning and your mentors. For Carnegie, true success was then giving it all back.' } },
-    ],
+    "glyph": "☕",
+    "readTime": "7 h"
   },
   {
-    id: 'my-life-and-work',
-    title: 'My Life and Work',
-    author: 'Henry Ford',
-    publisher: { fr: 'Autobiographie', en: 'Memoir' },
-    handle: 'henryford',
-    caption: {
-      fr: "L'innovation de Ford n'était pas la voiture, mais le procédé. 🚗",
-      en: "Ford's real innovation wasn't the car — it was the process. 🚗",
+    "id": "losing-my-virginity",
+    "title": "Losing My Virginity",
+    "author": "Richard Branson",
+    "publisher": {
+      "fr": "Autobiographie",
+      "en": "Memoir"
     },
-    tags: ['ford', 'assemblyline', 'manufacturing', 'wages'],
-    theme: { from: '#1e40af', to: '#172554', text: '#eff6ff' },
-    glyph: '🚗',
-    readTime: '6 h',
-    likes: 14210,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'AUTOBIOGRAPHIE', en: 'MEMOIR' }, title: 'My Life and Work', body: { fr: "L'autobiographie du pionnier de l'automobile — Henry Ford", en: 'The autobiography of the automobile pioneer — Henry Ford' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'Le gamin obsédé par les machines', en: 'A boy obsessed with machines' }, body: { fr: "Fils de fermier, il démonte et remonte des montres pour le plaisir. La ferme l'ennuie ; la mécanique le passionne.", en: 'A farmer’s son, he takes watches apart and reassembles them for fun. Farming bores him; machinery thrills him.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'Le Quadricycle', en: 'The Quadricycle' }, body: { fr: "Il construit son premier véhicule dans un petit hangar — et doit abattre un mur pour le sortir, l'engin étant trop large pour la porte.", en: 'He builds his first vehicle in a small shed — then has to knock down a wall to get it out, since it’s too wide for the door.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Deux échecs avant Ford', en: 'Two failures before Ford' }, body: { fr: "Ses deux premières sociétés automobiles échouent. Ce n'est qu'à la troisième tentative que naît la Ford Motor Company.", en: 'His first two car companies fail. Only on the third attempt is the Ford Motor Company born.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: 'La chaîne + le salaire de 5 $', en: 'The line + the $5 wage' }, body: { fr: "La chaîne de montage mobile fait chuter le temps d'assemblage de 12 h à ~1h30. En 1914, il double les salaires à 5 $/jour : moins de turnover, et des ouvriers qui peuvent s'acheter une Ford.", en: 'The moving assembly line drops assembly time from 12 hours to ~90 minutes. In 1914 he doubles wages to $5/day: less turnover, and workers who can now buy a Ford.' } },
-      { kind: 'quote', title: { fr: "« Que tu penses pouvoir ou ne pas pouvoir, tu as raison. »", en: '"Whether you think you can or you think you can’t, you’re right."' }, attribution: { fr: "D'après Henry Ford", en: 'Attributed to Henry Ford' } },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Repense le « comment », pas seulement le « quoi ». Le génie de Ford fut le procédé de production, qui a rendu la voiture accessible à tous.", en: 'Rethink the "how," not just the "what." Ford’s genius was the production process that put the car within everyone’s reach.' } },
-    ],
-  },
-  {
-    id: 'walt-disney',
-    title: 'Walt Disney',
-    author: 'Neal Gabler',
-    publisher: { fr: 'Biographie', en: 'Biography' },
-    handle: 'waltdisney',
-    caption: {
-      fr: "Licencié pour « manque d'imagination ». Puis il a inventé Mickey. 🐭",
-      en: 'Fired for "lacking imagination." Then he invented Mickey. 🐭',
+    "handle": "richardbranson",
+    "theme": {
+      "from": "#dc2626",
+      "to": "#7f1d1d",
+      "text": "#fef2f2"
     },
-    tags: ['disney', 'creativity', 'ip', 'resilience'],
-    theme: { from: '#6d28d9', to: '#2e1065', text: '#f5f3ff' },
-    glyph: '🐭',
-    readTime: '11 h',
-    likes: 20450,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'BIOGRAPHIE', en: 'BIOGRAPHY' }, title: 'Walt Disney', body: { fr: 'Le triomphe de l’imagination américaine — d’après Neal Gabler', en: 'The triumph of the American imagination — after Neal Gabler' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: "Licencié pour « manque d'imagination »", en: 'Fired for "lacking imagination"' }, body: { fr: "Jeune, un rédacteur en chef le renvoie en le jugeant sans idées ni imagination. Le début d'une longue série de revers.", en: 'As a young man, an editor fires him for supposedly lacking ideas and imagination. The start of a long series of setbacks.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'Oswald volé', en: 'Oswald stolen' }, body: { fr: "Son distributeur lui reprend les droits de son personnage, Oswald le lapin, et débauche ses animateurs. Leçon fondatrice : possède ta propriété intellectuelle.", en: 'His distributor seizes the rights to his character, Oswald the Rabbit, and poaches his animators. A founding lesson: own your intellectual property.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'La naissance de Mickey', en: 'The birth of Mickey' }, body: { fr: "Ruiné, il crée un nouveau personnage sur le trajet du retour en train : une souris. Mickey Mouse le relance et lui appartient, à lui.", en: 'Broke, he creates a new character on the train ride home: a mouse. Mickey Mouse revives him — and this time it’s his.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: '« La folie de Disney »', en: '"Disney’s Folly"' }, body: { fr: "Il hypothèque tout pour Blanche-Neige, premier long-métrage animé de l'histoire. L'industrie parle de folie. Le film triomphe.", en: 'He mortgages everything for Snow White, the first-ever animated feature. The industry calls it folly. The film triumphs.' } },
-      { kind: 'quote', title: { fr: "« Pour commencer, arrête de parler et mets-toi à faire. »", en: '"The way to get started is to quit talking and begin doing."' }, attribution: 'Walt Disney' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Possède tes créations, et transforme chaque perte en création suivante. Disney a rebondi de chaque échec par une idée plus grande.", en: 'Own your creations, and turn every loss into your next creation. Disney bounced back from each failure with a bigger idea.' } },
-    ],
+    "glyph": "✈️",
+    "readTime": "10 h"
   },
   {
-    id: 'kamprad-ikea',
-    title: 'Leading by Design',
-    author: 'Ingvar Kamprad',
-    publisher: { fr: 'Autobiographie', en: 'Memoir' },
-    handle: 'ingvarkamprad',
-    caption: {
-      fr: "IKEA : quand chaque obstacle devient un avantage. 🪑",
-      en: 'IKEA: when every obstacle becomes an advantage. 🪑',
+    "id": "principles-dalio",
+    "title": "Principles",
+    "author": "Ray Dalio",
+    "publisher": {
+      "fr": "Autobiographie",
+      "en": "Memoir"
     },
-    tags: ['ikea', 'design', 'frugality', 'lowcost'],
-    theme: { from: '#0d9488', to: '#134e4a', text: '#f0fdfa' },
-    glyph: '🪑',
-    readTime: '6 h',
-    likes: 15320,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'AUTOBIOGRAPHIE', en: 'MEMOIR' }, title: 'Leading by Design', body: { fr: "L'histoire d'IKEA par son fondateur — Ingvar Kamprad", en: 'The story of IKEA by its founder — Ingvar Kamprad' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'Le petit vendeur à vélo', en: 'The little peddler on a bike' }, body: { fr: "Enfant, il achète des allumettes en gros et les revend à l'unité à vélo, puis des graines, des stylos, des cartes. Le commerce dans le sang très tôt.", en: 'As a boy he buys matches in bulk and resells them one by one on his bike, then seeds, pens, postcards. Trade in his blood from the start.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'IKEA à 17 ans', en: 'IKEA at 17' }, body: { fr: "Il fonde IKEA à 17 ans avec une récompense reçue pour ses bons résultats scolaires. Le nom mêle ses initiales, sa ferme et son village.", en: 'He founds IKEA at 17 with a cash reward for good school results. The name blends his initials, his farm and his village.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Le boycott qui le sauve', en: 'The boycott that saves him' }, body: { fr: "Les fabricants suédois le boycottent à cause de ses prix bas. Il s'approvisionne alors en Pologne — encore moins cher. L'attaque devient un atout.", en: 'Swedish makers boycott him over his low prices. So he sources from Poland — cheaper still. The attack becomes an advantage.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: 'Le meuble en kit', en: 'The flat pack' }, body: { fr: "Un employé retire les pieds d'une table pour la faire entrer dans une voiture. Révélation : le flat-pack réduit transport, stockage et prix.", en: 'An employee removes a table’s legs to fit it in a car. Revelation: the flat pack slashes shipping, storage and price.' } },
-      { kind: 'quote', title: { fr: "« Seuls ceux qui dorment ne font pas d'erreurs. »", en: '"Only those who are asleep make no mistakes."' }, attribution: 'Ingvar Kamprad' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Une contrainte bien exploitée devient ton avantage structurel. Le kit et le low-cost d'IKEA sont nés d'obstacles, pas d'un plan parfait.", en: 'A constraint well used becomes your structural advantage. IKEA’s flat pack and low cost were born from obstacles, not a perfect plan.' } },
-    ],
-  },
-  {
-    id: 'grinding-it-out',
-    title: 'Grinding It Out',
-    author: 'Ray Kroc',
-    publisher: { fr: 'Autobiographie', en: 'Memoir' },
-    handle: 'raykroc',
-    caption: {
-      fr: "McDonald's : l'opportunité d'une vie, saisie à 52 ans. 🍟",
-      en: "McDonald's: the opportunity of a lifetime, seized at 52. 🍟",
+    "handle": "raydalio",
+    "theme": {
+      "from": "#0e7490",
+      "to": "#164e63",
+      "text": "#ecfeff"
     },
-    tags: ['mcdonalds', 'franchising', 'persistence', 'realestate'],
-    theme: { from: '#b91c1c', to: '#78350f', text: '#fffbeb' },
-    glyph: '🍟',
-    readTime: '6 h',
-    likes: 16780,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'AUTOBIOGRAPHIE', en: 'MEMOIR' }, title: 'Grinding It Out', body: { fr: "L'homme qui a bâti l'empire McDonald's — Ray Kroc", en: 'The man who built the McDonald’s empire — Ray Kroc' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'Vendeur à 52 ans', en: 'A salesman at 52' }, body: { fr: "Toute sa vie, il vend des gobelets puis des mixeurs à milkshakes, de ville en ville. À 52 ans, il n'est encore qu'un VRP sans gloire.", en: 'His whole life he sells paper cups, then milkshake mixers, town after town. At 52, he’s still just an unremarkable travelling salesman.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'La découverte', en: 'The discovery' }, body: { fr: "Intrigué qu'un petit resto commande huit mixeurs d'un coup, il visite les frères McDonald en Californie et découvre leur « Speedee System » ultra-efficace.", en: 'Puzzled that one small restaurant orders eight mixers at once, he visits the McDonald brothers in California and discovers their ultra-efficient "Speedee System."' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'La vision du franchisage', en: 'The franchising vision' }, body: { fr: "Là où les frères se contentent d'un restaurant, Kroc voit un réseau national. Il ne l'invente pas — il l'industrialise.", en: 'Where the brothers are content with one restaurant, Kroc sees a national network. He doesn’t invent it — he industrializes it.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: "Le vrai business : l'immobilier", en: 'The real business: real estate' }, body: { fr: "Son directeur financier lui souffle la clé : McDonald's ne gagne pas d'argent sur les burgers, mais sur les terrains qu'il possède et loue aux franchisés.", en: 'His finance chief reveals the key: McDonald’s makes money not on burgers, but on the land it owns and leases to franchisees.' } },
-      { kind: 'quote', title: { fr: "« La chance est le dividende de la sueur. Plus tu sues, plus tu as de chance. »", en: '"Luck is a dividend of sweat. The more you sweat, the luckier you get."' }, attribution: 'Ray Kroc' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "L'opportunité de ta vie peut arriver tard. Kroc n'a rien inventé : il a vu grand dans l'idée d'autres et l'a exécutée sans relâche.", en: 'The opportunity of your life can come late. Kroc invented nothing: he saw a bigger vision in others’ idea and executed it relentlessly.' } },
-    ],
+    "glyph": "🌊",
+    "readTime": "8 h"
   },
   {
-    id: 'the-snowball',
-    title: 'The Snowball',
-    author: 'Alice Schroeder',
-    publisher: { fr: 'Biographie', en: 'Biography' },
-    handle: 'warrenbuffett',
-    caption: {
-      fr: "Warren Buffett : commence tôt, et laisse le temps composer. 💰",
-      en: 'Warren Buffett: start early, and let time compound. 💰',
+    "id": "carnegie-autobiography",
+    "title": "Autobiography of Andrew Carnegie",
+    "author": "Andrew Carnegie",
+    "publisher": {
+      "fr": "Autobiographie",
+      "en": "Memoir"
     },
-    tags: ['buffett', 'investing', 'compounding', 'patience'],
-    theme: { from: '#047857', to: '#064e3b', text: '#ecfdf5' },
-    glyph: '💰',
-    readTime: '14 h',
-    likes: 23890,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'BIOGRAPHIE', en: 'BIOGRAPHY' }, title: 'The Snowball', body: { fr: 'Warren Buffett et le métier de la vie — d’après Alice Schroeder', en: 'Warren Buffett and the business of life — after Alice Schroeder' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'Petit commerçant précoce', en: 'A born little trader' }, body: { fr: "À 6 ans, il revend des Coca et des chewing-gums avec profit. À 11 ans, il achète sa première action. L'argent, très tôt, l'intrigue.", en: 'At 6 he resells Coca-Colas and gum at a profit. At 11 he buys his first stock. Money fascinates him from the very start.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'Les flippers des barbiers', en: 'The barbershop pinballs' }, body: { fr: "Adolescent, il installe des flippers d'occasion chez des barbiers. Ses premiers revenus passifs : la machine travaille pendant qu'il dort.", en: 'As a teen he places used pinball machines in barbershops. His first passive income: the machine works while he sleeps.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Recalé, puis sauvé par Graham', en: 'Rejected, then saved by Graham' }, body: { fr: "Refusé par Harvard, il étudie à Columbia sous Benjamin Graham, père de l'investissement « value ». Le refus le mène au meilleur mentor possible.", en: 'Rejected by Harvard, he studies at Columbia under Benjamin Graham, father of value investing. The rejection leads him to the best possible mentor.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: "L'effet boule de neige", en: 'The snowball effect' }, body: { fr: "Il réinvestit chaque gain, encore et encore. Les intérêts composés sur plus de 70 ans font le reste. Milliardaire, il vit toujours dans sa maison de 1958.", en: 'He reinvests every gain, again and again. Compounding over 70+ years does the rest. A billionaire, he still lives in the house he bought in 1958.' } },
-      { kind: 'quote', title: { fr: "« La vie est comme une boule de neige : trouve de la neige mouillée et une très longue pente. »", en: '"Life is like a snowball. The important thing is finding wet snow and a really long hill."' }, attribution: 'Warren Buffett' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Commence tôt, réinvestis, et laisse le temps composer. La patience est l'arme la plus sous-estimée du business.", en: 'Start early, reinvest, and let time compound. Patience is the most underrated weapon in business.' } },
-    ],
-  },
-  {
-    id: 'steve-jobs',
-    title: 'Steve Jobs',
-    author: 'Walter Isaacson',
-    publisher: { fr: 'Biographie', en: 'Biography' },
-    handle: 'stevejobs',
-    caption: {
-      fr: "Tu ne relies les points qu'en regardant en arrière. 🍎",
-      en: 'You can only connect the dots looking backward. 🍎',
+    "handle": "andrewcarnegie",
+    "theme": {
+      "from": "#b45309",
+      "to": "#451a03",
+      "text": "#fffbeb"
     },
-    tags: ['apple', 'design', 'vision', 'comeback'],
-    theme: { from: '#374151', to: '#111827', text: '#f9fafb' },
-    glyph: '🍎',
-    readTime: '16 h',
-    likes: 47200,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'BIOGRAPHIE', en: 'BIOGRAPHY' }, title: 'Steve Jobs', body: { fr: 'La biographie autorisée — Walter Isaacson', en: 'The exclusive biography — Walter Isaacson' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'La calligraphie à Reed', en: 'Calligraphy at Reed' }, body: { fr: "Il abandonne les cours obligatoires mais suit, par pure curiosité, un cours de calligraphie. Dix ans plus tard, ce sera la typographie du Macintosh.", en: 'He drops his required classes but, out of pure curiosity, sits in on a calligraphy course. Ten years later it becomes the Macintosh’s typography.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'Le garage', en: 'The garage' }, body: { fr: "En 1976, avec Steve Wozniak, il fonde Apple dans le garage familial. La vision : un ordinateur pour chaque personne, pas seulement les entreprises.", en: 'In 1976, with Steve Wozniak, he founds Apple in the family garage. The vision: a computer for every person, not just corporations.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Évincé de sa propre entreprise', en: 'Ousted from his own company' }, body: { fr: "En 1985, il est écarté d'Apple — une humiliation publique. Il fonde alors NeXT et rachète Pixar. L'exil devient un laboratoire.", en: 'In 1985 he’s pushed out of Apple — a public humiliation. He founds NeXT and buys Pixar. Exile becomes his laboratory.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: 'Le retour de 1997', en: 'The 1997 return' }, body: { fr: "Apple, presque en faillite, le rappelle. Il simplifie la gamme à quelques produits et lance l'iMac, l'iPod, puis l'iPhone. La renaissance.", en: 'A near-bankrupt Apple calls him back. He slashes the lineup to a few products and launches the iMac, the iPod, then the iPhone. The rebirth.' } },
-      { kind: 'quote', title: { fr: '« Restez affamés. Restez fous. »', en: '"Stay hungry. Stay foolish."' }, attribution: 'Steve Jobs' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Suis ta curiosité sans savoir où elle mène : les points se relient plus tard. Se faire virer fut, selon lui, la meilleure chose qui lui soit arrivée.", en: 'Follow your curiosity without knowing where it leads: the dots connect later. Getting fired, he said, was the best thing that ever happened to him.' } },
-    ],
+    "glyph": "🏭",
+    "readTime": "7 h"
   },
   {
-    id: 'elon-musk',
-    title: 'Elon Musk',
-    author: 'Walter Isaacson',
-    publisher: { fr: 'Biographie', en: 'Biography' },
-    handle: 'elonmusk',
-    caption: {
-      fr: "Tout remettre en jeu la même année pour SpaceX et Tesla. 🚀",
-      en: 'Betting it all on SpaceX and Tesla in the same year. 🚀',
+    "id": "my-life-and-work",
+    "title": "My Life and Work",
+    "author": "Henry Ford",
+    "publisher": {
+      "fr": "Autobiographie",
+      "en": "Memoir"
     },
-    tags: ['spacex', 'tesla', 'firstprinciples', 'risk'],
-    theme: { from: '#4338ca', to: '#1e1b4b', text: '#eef2ff' },
-    glyph: '🚀',
-    readTime: '18 h',
-    likes: 51300,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'BIOGRAPHIE', en: 'BIOGRAPHY' }, title: 'Elon Musk', body: { fr: 'La biographie — Walter Isaacson', en: 'The biography — Walter Isaacson' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'Coder à 12 ans', en: 'Coding at 12' }, body: { fr: "Enfance difficile à Pretoria, réfugié dans les livres. À 12 ans, il code un jeu, « Blastar », et le vend à un magazine. La technique comme échappatoire.", en: 'A hard childhood in Pretoria, escaping into books. At 12 he codes a game, "Blastar," and sells it to a magazine. Tech as a way out.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'Dormir au bureau', en: 'Sleeping at the office' }, body: { fr: "Pour sa première société, Zip2, il dort sous son bureau et se douche au YMCA pour économiser chaque dollar. L'intensité totale dès le départ.", en: 'For his first company, Zip2, he sleeps under his desk and showers at the YMCA to save every dollar. Total intensity from day one.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Tout risquer en 2008', en: 'Risking everything in 2008' }, body: { fr: "Après PayPal, il réinvestit sa fortune dans SpaceX et Tesla. En 2008, les deux frôlent la faillite la même année ; il emprunte pour payer le loyer.", en: 'After PayPal, he pours his fortune into SpaceX and Tesla. In 2008 both nearly go bankrupt the same year; he borrows money to make rent.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: 'Le 4e lancement', en: 'The fourth launch' }, body: { fr: "SpaceX n'a les moyens que de trois échecs. Les trois premiers tirs explosent. Le quatrième, en 2008, réussit et sauve tout — la NASA signe.", en: 'SpaceX can only afford three failures. The first three rockets blow up. The fourth, in 2008, succeeds and saves everything — NASA signs a contract.' } },
-      { kind: 'quote', title: { fr: "« Quand une chose compte assez, tu la fais même si les chances sont contre toi. »", en: '"When something is important enough, you do it even if the odds are not in your favor."' }, attribution: 'Elon Musk' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Raisonne par premiers principes plutôt que par imitation, et engage-toi à fond sur ce en quoi tu crois — même à contre-courant.", en: 'Reason from first principles rather than by analogy, and commit fully to what you believe in — even against the crowd.' } },
-    ],
-  },
-  {
-    id: 'source-code-gates',
-    title: 'Source Code',
-    author: 'Bill Gates',
-    publisher: { fr: 'Autobiographie', en: 'Memoir' },
-    handle: 'billgates',
-    caption: {
-      fr: "Les nuits de code qui ont mené à Microsoft. 💻",
-      en: 'The late-night coding that led to Microsoft. 💻',
+    "handle": "henryford",
+    "theme": {
+      "from": "#1e40af",
+      "to": "#172554",
+      "text": "#eff6ff"
     },
-    tags: ['microsoft', 'software', 'ownership', 'obsession'],
-    theme: { from: '#2563eb', to: '#1e3a8a', text: '#eff6ff' },
-    glyph: '💻',
-    readTime: '9 h',
-    likes: 28040,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'AUTOBIOGRAPHIE', en: 'MEMOIR' }, title: 'Source Code', body: { fr: 'Mes débuts — Bill Gates', en: 'My beginnings — Bill Gates' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'Les nuits au Lakeside', en: 'Late nights at Lakeside' }, body: { fr: "Adolescent, il se faufile la nuit dans la salle informatique de son école pour coder pendant des heures. L'obsession forge une expertise rarissime pour l'époque.", en: 'As a teenager he sneaks into his school’s computer room at night to code for hours. Obsession forges an expertise almost no one else has yet.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'Traf-O-Data, un échec utile', en: 'Traf-O-Data, a useful failure' }, body: { fr: "Sa première société, avec Paul Allen, analyse le trafic routier. Un échec commercial — mais l'apprentissage qui rend Microsoft possible.", en: 'His first company, with Paul Allen, analyzes road traffic. A commercial flop — but the learning that makes Microsoft possible.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Quitter Harvard', en: 'Leaving Harvard' }, body: { fr: "Il abandonne Harvard, convaincu qu'« un PC sur chaque bureau » arrive et qu'il ne faut pas rater la fenêtre. Le timing avant le diplôme.", en: 'He drops out of Harvard, convinced that "a PC on every desk" is coming and the window won’t wait. Timing over the diploma.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: 'Le deal IBM', en: 'The IBM deal' }, body: { fr: "Microsoft licencie MS-DOS à IBM sans en céder la propriété. Il peut donc le vendre à tous les fabricants de clones. Le coup de maître qui bâtit l'empire.", en: 'Microsoft licenses MS-DOS to IBM without giving up ownership. So it can sell it to every clone maker too. The masterstroke that builds the empire.' } },
-      { kind: 'quote', title: { fr: '« Tes clients les plus mécontents sont ta meilleure source d’apprentissage. »', en: '"Your most unhappy customers are your greatest source of learning."' }, attribution: 'Bill Gates' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Garde la propriété de ce qui a de la valeur. Et l'obsession précoce — coder la nuit — construit l'expertise qui paie des années plus tard.", en: 'Keep ownership of what has value. And early obsession — coding through the night — builds the expertise that pays off years later.' } },
-    ],
+    "glyph": "🚗",
+    "readTime": "6 h"
   },
   {
-    id: 'invent-and-wander',
-    title: 'Invent and Wander',
-    author: 'Jeff Bezos',
-    publisher: { fr: 'Autobiographie', en: 'Memoir' },
-    handle: 'jeffbezos',
-    caption: {
-      fr: "Amazon : décider avec le « cadre de minimisation des regrets ». 📦",
-      en: 'Amazon: deciding with the "regret minimization framework." 📦',
+    "id": "walt-disney",
+    "title": "Walt Disney",
+    "author": "Neal Gabler",
+    "publisher": {
+      "fr": "Biographie",
+      "en": "Biography"
     },
-    tags: ['amazon', 'customer', 'longterm', 'day1'],
-    theme: { from: '#c2410c', to: '#431407', text: '#fff7ed' },
-    glyph: '📦',
-    readTime: '8 h',
-    likes: 24960,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'AUTOBIOGRAPHIE', en: 'MEMOIR' }, title: 'Invent and Wander', body: { fr: 'Les écrits rassemblés de Jeff Bezos', en: 'The collected writings of Jeff Bezos' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'Le cadre des regrets', en: 'The regret framework' }, body: { fr: "Pour quitter un job confortable à Wall Street, il se projette à 80 ans : regretterait-il d'avoir tenté internet, ou de ne pas l'avoir fait ? La réponse est évidente.", en: 'To leave a comfortable Wall Street job, he projects himself at 80: would he regret trying the internet, or not trying it? The answer is obvious.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 02', en: 'KEY MOMENT 02' }, title: { fr: 'Le garage et les bureaux-portes', en: 'The garage and door-desks' }, body: { fr: "Amazon démarre dans un garage. Il fabrique des bureaux avec de simples portes posées sur des tréteaux — un symbole de frugalité encore vivant aujourd'hui.", en: 'Amazon starts in a garage. He builds desks from plain doors on trestles — a symbol of frugality that still lives on today.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 03', en: 'KEY MOMENT 03' }, title: { fr: 'Toujours « Jour 1 »', en: 'Always "Day 1"' }, body: { fr: "Sa philosophie : rester au « Jour 1 », avec l'énergie d'une startup. Le « Jour 2 », dit-il, c'est la stagnation, puis le déclin, puis la mort.", en: 'His philosophy: stay at "Day 1," with a startup’s energy. "Day 2," he says, is stasis, then decline, then death.' } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 04', en: 'KEY MOMENT 04' }, title: { fr: 'Client, pas concurrent', en: 'Customer, not competitor' }, body: { fr: "Il oriente tout autour du client, pas de la concurrence, et accepte des années sans bénéfices pour tout réinvestir dans le long terme.", en: 'He orients everything around the customer, not the competition, and accepts years without profit to reinvest it all into the long term.' } },
-      { kind: 'quote', title: { fr: '« Têtus sur la vision, souples sur les détails. »', en: '"We are stubborn on vision. We are flexible on details."' }, attribution: 'Jeff Bezos' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Décide en minimisant tes regrets futurs, pense en « Jour 1 », et reste obsédé par le client plutôt que par tes rivaux.", en: 'Decide by minimizing your future regrets, think in "Day 1," and stay obsessed with the customer rather than your rivals.' } },
-    ],
-  },
-
-  // ─────────────────────  DÉVELOPPEMENT PERSONNEL / PERSONAL GROWTH  ─────────────────────
-  {
-    id: 'atomic-habits',
-    title: 'Atomic Habits',
-    author: 'James Clear',
-    publisher: { fr: 'Développement personnel', en: 'Personal Growth' },
-    handle: 'growthlibrary',
-    caption: { fr: '1% mieux chaque jour : la puissance des petites habitudes. ⚛️', en: '1% better every day: the power of tiny habits. ⚛️' },
-    tags: ['habits', 'systems', 'identity', 'consistency'],
-    theme: { from: '#10b981', to: '#065f46', text: '#ecfdf5' },
-    glyph: '⚛️',
-    readTime: '5 h',
-    likes: 38900,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'DÉVELOPPEMENT PERSO', en: 'PERSONAL GROWTH' }, title: 'Atomic Habits', body: { fr: 'Un rien peut tout changer — James Clear', en: 'Tiny changes, remarkable results — James Clear' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Les systèmes battent les objectifs', en: 'Systems beat goals' }, body: { fr: "Tu ne t'élèves pas au niveau de tes objectifs, tu tombes au niveau de tes systèmes. Concentre-toi sur le processus, pas le résultat.", en: "You don't rise to your goals, you fall to your systems. Focus on the process, not the outcome." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: '1% chaque jour', en: '1% every day' }, body: { fr: "S'améliorer de 1% par jour, c'est être ~37 fois meilleur en un an. Les habitudes composent comme les intérêts.", en: 'Improving 1% a day makes you ~37x better in a year. Habits compound like interest.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "Change d'identité, pas juste de comportement", en: 'Change identity, not just behavior' }, body: { fr: "Ne vise pas « courir un marathon » mais « devenir un coureur ». Les habitudes durables découlent de qui tu crois être.", en: 'Don\'t aim to "run a marathon" but to "become a runner." Lasting habits flow from who you believe you are.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Les 4 lois du changement', en: 'The 4 laws of behavior change' }, body: { fr: "Rends-la évidente, attirante, facile, satisfaisante. Pour briser une mauvaise habitude, inverse chaque loi.", en: 'Make it obvious, attractive, easy, satisfying. To break a bad habit, invert each law.' } },
-      { kind: 'quote', title: { fr: "« Tu ne t'élèves pas au niveau de tes objectifs, tu chutes au niveau de tes systèmes. »", en: '"You do not rise to the level of your goals, you fall to the level of your systems."' }, attribution: 'James Clear' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Rends la bonne habitude évidente et faisable en 2 minutes. La régularité minuscule, répétée, bat la motivation intense et ponctuelle.", en: 'Make the good habit obvious and 2-minutes easy. Tiny consistency, repeated, beats intense but occasional motivation.' } },
-    ],
+    "handle": "waltdisney",
+    "theme": {
+      "from": "#6d28d9",
+      "to": "#2e1065",
+      "text": "#f5f3ff"
+    },
+    "glyph": "🐭",
+    "readTime": "11 h"
   },
   {
-    id: 'deep-work',
-    title: 'Deep Work',
-    author: 'Cal Newport',
-    publisher: { fr: 'Développement personnel', en: 'Personal Growth' },
-    handle: 'growthlibrary',
-    caption: { fr: 'La concentration intense est le super-pouvoir du 21e siècle. 🎯', en: 'Intense focus is the superpower of the 21st century. 🎯' },
-    tags: ['focus', 'productivity', 'attention', 'craft'],
-    theme: { from: '#1e3a8a', to: '#0f172a', text: '#eff6ff' },
-    glyph: '🎯',
-    readTime: '6 h',
-    likes: 26400,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'DÉVELOPPEMENT PERSO', en: 'PERSONAL GROWTH' }, title: 'Deep Work', body: { fr: 'Réussir dans un monde de distraction — Cal Newport', en: 'Rules for focused success in a distracted world — Cal Newport' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Travail profond vs. superficiel', en: 'Deep vs. shallow work' }, body: { fr: "Le travail profond (concentration sans distraction) crée une valeur rare. Le superficiel (mails, réunions) est facilement remplaçable.", en: 'Deep work (distraction-free focus) creates rare value. Shallow work (email, meetings) is easily replicable.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'La concentration est un muscle', en: 'Focus is a muscle' }, body: { fr: "Le zapping permanent abîme ta capacité de concentration. Entraîne-toi à t'ennuyer, éloigne ton téléphone.", en: 'Constant switching erodes your ability to focus. Train yourself to tolerate boredom, keep your phone away.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Ritualise ta concentration', en: 'Ritualize your focus' }, body: { fr: "Bloque des plages dédiées, un lieu, une durée. Ne compte pas sur la volonté : compte sur la routine.", en: "Block dedicated slots, a place, a duration. Don't rely on willpower — rely on routine." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Élimine le superficiel', en: 'Drain the shallows' }, body: { fr: "Fixe une fin de journée stricte, planifie chaque minute, dis non au reste. La rareté force les priorités.", en: 'Set a hard end to your day, schedule every minute, say no to the rest. Scarcity forces priorities.' } },
-      { kind: 'quote', title: { fr: "« La capacité à se concentrer sans distraction devient rare, et donc précieuse. »", en: '"The ability to focus without distraction is becoming rare, and therefore valuable."' }, attribution: 'Cal Newport' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Protège de longues plages sans interruption pour le travail qui compte. Dans une économie de la distraction, la concentration profonde est ton avantage.", en: 'Protect long uninterrupted blocks for the work that matters. In a distraction economy, deep focus is your edge.' } },
-    ],
+    "id": "kamprad-ikea",
+    "title": "Leading by Design",
+    "author": "Ingvar Kamprad",
+    "publisher": {
+      "fr": "Autobiographie",
+      "en": "Memoir"
+    },
+    "handle": "ingvarkamprad",
+    "theme": {
+      "from": "#0d9488",
+      "to": "#134e4a",
+      "text": "#f0fdfa"
+    },
+    "glyph": "🪑",
+    "readTime": "6 h"
   },
   {
-    id: 'seven-habits',
-    title: 'The 7 Habits of Highly Effective People',
-    author: 'Stephen R. Covey',
-    publisher: { fr: 'Développement personnel', en: 'Personal Growth' },
-    handle: 'growthlibrary',
-    caption: { fr: 'Les 7 habitudes des gens efficaces, un classique intemporel. 🌳', en: 'The 7 habits of highly effective people — a timeless classic. 🌳' },
-    tags: ['effectiveness', 'character', 'proactivity', 'priorities'],
-    theme: { from: '#b45309', to: '#451a03', text: '#fffbeb' },
-    glyph: '🌳',
-    readTime: '9 h',
-    likes: 21200,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'DÉVELOPPEMENT PERSO', en: 'PERSONAL GROWTH' }, title: 'The 7 Habits of Highly Effective People', body: { fr: 'Des habitudes pour une vie efficace — Stephen R. Covey', en: 'Powerful lessons in personal change — Stephen R. Covey' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Sois proactif', en: 'Be proactive' }, body: { fr: "Entre le stimulus et la réponse, il y a un espace : ta liberté de choisir. Agis sur ton cercle d'influence, pas de préoccupation.", en: 'Between stimulus and response lies your freedom to choose. Act on your circle of influence, not of concern.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Commence avec la fin en tête', en: 'Begin with the end in mind' }, body: { fr: "Définis ta mission de vie. Toute chose est créée deux fois : d'abord mentalement, ensuite dans le réel.", en: 'Define your life mission. All things are created twice: first mentally, then physically.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Priorité aux priorités', en: 'Put first things first' }, body: { fr: "Consacre-toi à l'important-non-urgent : relations, santé, planification. C'est là que se joue l'efficacité durable.", en: 'Devote yourself to the important-not-urgent: relationships, health, planning. That\'s where lasting effectiveness lives.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Gagnant-gagnant + écoute vraiment', en: 'Win-win + truly listen' }, body: { fr: "Vise le bénéfice mutuel, et cherche d'abord à comprendre avant d'être compris. Puis crée des synergies.", en: 'Aim for mutual benefit, and seek first to understand before being understood. Then synergize.' } },
-      { kind: 'quote', title: { fr: "« Entre le stimulus et la réponse, il y a un espace : notre liberté de choisir. »", en: '"Between stimulus and response there is a space — our freedom to choose."' }, attribution: 'Stephen R. Covey' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "L'efficacité durable vient du caractère, pas des astuces. Travaille de l'intérieur vers l'extérieur, et régénère-toi (« aiguise la scie »).", en: 'Lasting effectiveness comes from character, not tricks. Work from the inside out, and renew yourself ("sharpen the saw").' } },
-    ],
+    "id": "grinding-it-out",
+    "title": "Grinding It Out",
+    "author": "Ray Kroc",
+    "publisher": {
+      "fr": "Autobiographie",
+      "en": "Memoir"
+    },
+    "handle": "raykroc",
+    "theme": {
+      "from": "#b91c1c",
+      "to": "#78350f",
+      "text": "#fffbeb"
+    },
+    "glyph": "🍟",
+    "readTime": "6 h"
   },
   {
-    id: 'mindset',
-    title: 'Mindset',
-    author: 'Carol S. Dweck',
-    publisher: { fr: 'Développement personnel', en: 'Personal Growth' },
-    handle: 'growthlibrary',
-    caption: { fr: "État d'esprit fixe ou de croissance : ça change tout. 💡", en: 'Fixed vs. growth mindset: it changes everything. 💡' },
-    tags: ['mindset', 'learning', 'grit', 'psychology'],
-    theme: { from: '#7c3aed', to: '#4c1d95', text: '#f5f3ff' },
-    glyph: '💡',
-    readTime: '6 h',
-    likes: 19800,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'DÉVELOPPEMENT PERSO', en: 'PERSONAL GROWTH' }, title: 'Mindset', body: { fr: 'La nouvelle psychologie de la réussite — Carol S. Dweck', en: 'The new psychology of success — Carol S. Dweck' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: "Deux états d'esprit", en: 'Two mindsets' }, body: { fr: "Fixe : les talents sont innés et figés. Croissance : les capacités se développent par l'effort et l'apprentissage.", en: 'Fixed: talents are innate and set. Growth: abilities develop through effort and learning.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: "Le pouvoir du « pas encore »", en: "The power of 'yet'" }, body: { fr: "Face à l'échec, l'état d'esprit de croissance dit « je n'y arrive pas encore ». L'échec devient une information, pas un verdict.", en: 'Facing failure, the growth mindset says "I can\'t do it yet." Failure becomes information, not a verdict.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "Félicite l'effort, pas le talent", en: 'Praise effort, not talent' }, body: { fr: "Dire à un enfant « tu es doué » le fragilise ; « tu as bien travaillé » le renforce. Idem pour toi-même.", en: 'Telling a child "you\'re gifted" makes them fragile; "you worked hard" makes them resilient. Same for yourself.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: "L'effort est le chemin", en: 'Effort is the path' }, body: { fr: "Les plus grands ne sont pas ceux qui n'échouent jamais, mais ceux qui voient l'effort comme la voie vers la maîtrise.", en: 'The greats aren\'t those who never fail, but those who see effort as the path to mastery.' } },
-      { kind: 'quote', title: { fr: "« Devenir, c'est mieux qu'être. »", en: '"Becoming is better than being."' }, attribution: 'Carol S. Dweck' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Traite tes capacités comme un muscle qui grandit. Recherche les défis qui te font progresser plutôt que ceux qui te confortent.", en: 'Treat your abilities as a muscle that grows. Seek challenges that stretch you rather than ones that reassure you.' } },
-    ],
+    "id": "the-snowball",
+    "title": "The Snowball",
+    "author": "Alice Schroeder",
+    "publisher": {
+      "fr": "Biographie",
+      "en": "Biography"
+    },
+    "handle": "warrenbuffett",
+    "theme": {
+      "from": "#047857",
+      "to": "#064e3b",
+      "text": "#ecfdf5"
+    },
+    "glyph": "💰",
+    "readTime": "14 h"
   },
   {
-    id: 'mans-search-for-meaning',
-    title: "Man's Search for Meaning",
-    author: 'Viktor E. Frankl',
-    publisher: { fr: 'Développement personnel', en: 'Personal Growth' },
-    handle: 'growthlibrary',
-    caption: { fr: 'Trouver un sens même dans la pire des souffrances. 🕯️', en: 'Finding meaning even in the worst suffering. 🕯️' },
-    tags: ['meaning', 'resilience', 'purpose', 'psychology'],
-    theme: { from: '#3f3f46', to: '#18181b', text: '#fafafa' },
-    glyph: '🕯️',
-    readTime: '4 h',
-    likes: 33200,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'DÉVELOPPEMENT PERSO', en: 'PERSONAL GROWTH' }, title: "Man's Search for Meaning", body: { fr: 'Découvrir un sens à sa vie — Viktor E. Frankl', en: "A psychiatrist's memoir of meaning — Viktor E. Frankl" } },
-      { kind: 'point', eyebrow: { fr: 'MOMENT CLÉ 01', en: 'KEY MOMENT 01' }, title: { fr: 'La dernière des libertés', en: 'The last of the freedoms' }, body: { fr: "Survivant des camps, Frankl l'a compris : on peut tout t'enlever, sauf le choix de ton attitude face à ce qui t'arrive.", en: 'A camp survivor, Frankl understood: everything can be taken but one thing — the choice of your attitude toward what happens.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: "Vivre, c'est chercher un sens", en: 'To live is to seek meaning' }, body: { fr: "Ce qui nous maintient en vie n'est ni le plaisir ni le pouvoir, mais une raison de vivre — un « pourquoi ».", en: "What keeps us alive isn't pleasure or power, but a reason to live — a \"why.\"" } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "Le « pourquoi » porte le « comment »", en: "The 'why' carries the 'how'" }, body: { fr: "« Celui qui a un pourquoi peut supporter presque n'importe quel comment. » La souffrance avec un sens devient supportable.", en: '"He who has a why can bear almost any how." Suffering with meaning becomes bearable.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Trois sources de sens', en: 'Three sources of meaning' }, body: { fr: "Créer une œuvre, aimer quelqu'un, ou la manière dont on affronte une souffrance inévitable.", en: 'Creating a work, loving someone, or the way we face unavoidable suffering.' } },
-      { kind: 'quote', title: { fr: "« Celui qui a un pourquoi qui le fait vivre peut supporter presque n'importe quel comment. »", en: '"Those who have a why to live can bear almost any how."' }, attribution: 'Viktor E. Frankl' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Ne demande pas ce que tu attends de la vie, mais ce que la vie attend de toi. Le sens se trouve dans la responsabilité, pas le confort.", en: "Don't ask what you expect from life, but what life expects from you. Meaning is found in responsibility, not comfort." } },
-    ],
-  },
-
-  // ─────────────────────  FINANCES PERSONNELLES / PERSONAL FINANCE  ─────────────────────
-  {
-    id: 'psychology-of-money',
-    title: 'The Psychology of Money',
-    author: 'Morgan Housel',
-    publisher: { fr: 'Finances personnelles', en: 'Personal Finance' },
-    handle: 'moneylibrary',
-    caption: { fr: "L'argent, c'est 90% de comportement, 10% de maths. 💵", en: 'Money is 90% behavior, 10% math. 💵' },
-    tags: ['money', 'behavior', 'investing', 'wealth'],
-    theme: { from: '#047857', to: '#064e3b', text: '#ecfdf5' },
-    glyph: '💵',
-    readTime: '5 h',
-    likes: 41800,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'FINANCES PERSO', en: 'PERSONAL FINANCE' }, title: 'The Psychology of Money', body: { fr: 'Petites leçons intemporelles sur la richesse — Morgan Housel', en: 'Timeless lessons on wealth, greed, and happiness — Morgan Housel' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: "Le comportement bat l'intelligence", en: 'Behavior beats intelligence' }, body: { fr: "Bien gérer son argent tient moins au QI qu'au comportement : patience, sang-froid, éviter la panique.", en: 'Managing money well is less about IQ than behavior: patience, composure, avoiding panic.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'La vraie richesse est invisible', en: 'Real wealth is invisible' }, body: { fr: "La richesse, c'est l'argent que tu NE dépenses pas. Ce que tu ne vois pas : la liberté et la sécurité, pas les voitures.", en: "Wealth is the money you DON'T spend. What you don't see: freedom and security, not the cars." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Le composé fait le gros du travail', en: 'Compounding does the heavy lifting' }, body: { fr: "99% de la fortune de Buffett est arrivée après ses 50 ans. Le temps est le carburant, pas le rendement spectaculaire.", en: "99% of Buffett's wealth came after age 50. Time is the fuel, not spectacular returns." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: "Garde une marge d'erreur", en: 'Keep room for error' }, body: { fr: "Le futur est incertain. L'épargne et la prudence te permettent de tenir assez longtemps pour que le composé opère.", en: 'The future is uncertain. Savings and caution let you survive long enough for compounding to work.' } },
-      { kind: 'quote', title: { fr: "« Gagner de l'argent et le garder sont deux compétences différentes. »", en: '"Getting money and keeping money are two different skills."' }, attribution: 'Morgan Housel' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Vise « raisonnable » plutôt que « rationnel ». L'épargne, la patience et l'humilité battent le génie financier sur le long terme.", en: "Aim for 'reasonable' over 'rational.' Saving, patience and humility beat financial genius over the long run." } },
-    ],
+    "id": "steve-jobs",
+    "title": "Steve Jobs",
+    "author": "Walter Isaacson",
+    "publisher": {
+      "fr": "Biographie",
+      "en": "Biography"
+    },
+    "handle": "stevejobs",
+    "theme": {
+      "from": "#374151",
+      "to": "#111827",
+      "text": "#f9fafb"
+    },
+    "glyph": "🍎",
+    "readTime": "16 h"
   },
   {
-    id: 'rich-dad-poor-dad',
-    title: 'Rich Dad Poor Dad',
-    author: 'Robert T. Kiyosaki',
-    publisher: { fr: 'Finances personnelles', en: 'Personal Finance' },
-    handle: 'moneylibrary',
-    caption: { fr: "Ce que les riches enseignent à leurs enfants sur l'argent. 🏦", en: 'What the rich teach their kids about money. 🏦' },
-    tags: ['money', 'assets', 'financialiq', 'investing'],
-    theme: { from: '#b91c1c', to: '#450a0a', text: '#fef2f2' },
-    glyph: '🏦',
-    readTime: '5 h',
-    likes: 29100,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'FINANCES PERSO', en: 'PERSONAL FINANCE' }, title: 'Rich Dad Poor Dad', body: { fr: "Ce que les riches apprennent à leurs enfants sur l'argent — Robert T. Kiyosaki", en: 'What the rich teach their kids about money — Robert T. Kiyosaki' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Actifs vs. passifs', en: 'Assets vs. liabilities' }, body: { fr: "Les riches achètent des actifs (qui mettent de l'argent dans ta poche). Les autres achètent des passifs qu'ils croient être des actifs.", en: 'The rich buy assets (that put money in your pocket). Others buy liabilities they think are assets.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: "Ne travaille pas pour l'argent", en: "Don't work for money" }, body: { fr: "Apprends à faire travailler l'argent pour toi. Le salaire seul te garde dans la « course du rat ».", en: 'Learn to make money work for you. A salary alone keeps you in the "rat race."' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "L'intelligence financière s'apprend", en: 'Financial IQ is learned' }, body: { fr: "L'école n'enseigne pas l'argent. Comptabilité, investissement, marchés, droit : forme-toi toi-même.", en: "School doesn't teach money. Accounting, investing, markets, law: educate yourself." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Paie-toi en premier', en: 'Pay yourself first' }, body: { fr: "Investis avant de payer tout le reste. La pression de devoir couvrir le reste stimule ta créativité financière.", en: 'Invest before paying everything else. The pressure to cover the rest sparks your financial creativity.' } },
-      { kind: 'quote', title: { fr: "« Les riches acquièrent des actifs. Les autres acquièrent des passifs qu'ils prennent pour des actifs. »", en: '"The rich acquire assets. The poor and middle class acquire liabilities they think are assets."' }, attribution: 'Robert T. Kiyosaki' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Concentre-toi à bâtir une colonne d'actifs qui génèrent des revenus. La liberté financière arrive quand tes actifs couvrent tes dépenses.", en: 'Focus on building a column of income-producing assets. Financial freedom comes when your assets cover your expenses.' } },
-    ],
+    "id": "elon-musk",
+    "title": "Elon Musk",
+    "author": "Walter Isaacson",
+    "publisher": {
+      "fr": "Biographie",
+      "en": "Biography"
+    },
+    "handle": "elonmusk",
+    "theme": {
+      "from": "#4338ca",
+      "to": "#1e1b4b",
+      "text": "#eef2ff"
+    },
+    "glyph": "🚀",
+    "readTime": "18 h"
   },
   {
-    id: 'richest-man-in-babylon',
-    title: 'The Richest Man in Babylon',
-    author: 'George S. Clason',
-    publisher: { fr: 'Finances personnelles', en: 'Personal Finance' },
-    handle: 'moneylibrary',
-    caption: { fr: "Les lois intemporelles de l'argent, contées en paraboles. 🏺", en: 'The timeless laws of money, told in parables. 🏺' },
-    tags: ['saving', 'money', 'wealth', 'discipline'],
-    theme: { from: '#a16207', to: '#422006', text: '#fefce8' },
-    glyph: '🏺',
-    readTime: '3 h',
-    likes: 24700,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'FINANCES PERSO', en: 'PERSONAL FINANCE' }, title: 'The Richest Man in Babylon', body: { fr: "Les secrets de l'argent des Anciens — George S. Clason", en: 'The success secrets of the ancients — George S. Clason' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: "Paie-toi d'abord un dixième", en: 'Pay yourself a tenth first' }, body: { fr: "« Une part de tout ce que tu gagnes est à toi. » Épargne au moins 10% de chaque revenu, avant toute dépense.", en: '"A part of all you earn is yours to keep." Save at least 10% of every income, before any spending.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Contrôle tes dépenses', en: 'Control your spending' }, body: { fr: "Ce que nous croyons « nécessaire » gonfle toujours jusqu'à nos revenus. Budgète pour ne pas dépasser neuf dixièmes.", en: 'What we call "necessary" always swells to match income. Budget so it never exceeds nine-tenths.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Fais fructifier ton or', en: 'Make your gold multiply' }, body: { fr: "Investis ton épargne pour qu'elle génère des revenus, et réinvestis ces revenus. Un troupeau qui se reproduit.", en: 'Invest your savings so they earn, and reinvest those earnings. A flock that breeds.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Protège ton capital', en: 'Guard your capital' }, body: { fr: "N'investis que là où le principal est sûr. Prends conseil auprès de gens compétents dans ce domaine précis.", en: 'Only invest where your principal is safe. Seek advice from those competent in that field.' } },
-      { kind: 'quote', title: { fr: "« Une part de tout ce que tu gagnes t'appartient — garde-la. »", en: '"A part of all you earn is yours to keep."' }, attribution: 'George S. Clason' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Épargne 10%, dépense moins que tu ne gagnes, et fais travailler ton épargne. Des lois simples, appliquées avec constance, bâtissent la richesse.", en: 'Save 10%, spend less than you earn, and put your savings to work. Simple laws, applied consistently, build wealth.' } },
-    ],
+    "id": "source-code-gates",
+    "title": "Source Code",
+    "author": "Bill Gates",
+    "publisher": {
+      "fr": "Autobiographie",
+      "en": "Memoir"
+    },
+    "handle": "billgates",
+    "theme": {
+      "from": "#2563eb",
+      "to": "#1e3a8a",
+      "text": "#eff6ff"
+    },
+    "glyph": "💻",
+    "readTime": "9 h"
   },
   {
-    id: 'millionaire-next-door',
-    title: 'The Millionaire Next Door',
-    author: 'Stanley & Danko',
-    publisher: { fr: 'Finances personnelles', en: 'Personal Finance' },
-    handle: 'moneylibrary',
-    caption: { fr: 'Les vrais millionnaires vivent plus modestement que tu ne crois. 🏡', en: 'Real millionaires live more modestly than you think. 🏡' },
-    tags: ['wealth', 'frugality', 'habits', 'money'],
-    theme: { from: '#065f46', to: '#022c22', text: '#ecfdf5' },
-    glyph: '🏡',
-    readTime: '6 h',
-    likes: 18300,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'FINANCES PERSO', en: 'PERSONAL FINANCE' }, title: 'The Millionaire Next Door', body: { fr: "Les surprenants secrets des riches américains — Thomas Stanley & William Danko", en: "The surprising secrets of America's wealthy — Thomas Stanley & William Danko" } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Richesse ≠ train de vie', en: 'Wealth ≠ lifestyle' }, body: { fr: "La plupart des millionnaires ne ressemblent pas à des millionnaires : maison modeste, voiture d'occasion. Le luxe visible est souvent de la dette.", en: "Most millionaires don't look the part: modest house, used car. Visible luxury is often debt." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Vis en dessous de tes moyens', en: 'Live below your means' }, body: { fr: "Ils accumulent en dépensant peu par rapport à leurs revenus. La frugalité est leur dénominateur commun.", en: 'They accumulate by spending little relative to income. Frugality is their common denominator.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Attaque vs. défense', en: 'Offense vs. defense' }, body: { fr: "Gagner beaucoup (attaque) ne suffit pas ; savoir garder (défense : budget, épargne) fait la fortune.", en: "Earning a lot (offense) isn't enough; keeping it (defense: budgeting, saving) builds wealth." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: "N'assiste pas trop tes enfants", en: "Don't over-subsidize your kids" }, body: { fr: "Le soutien financier permanent affaiblit l'autonomie des enfants. Apprends-leur à pêcher plutôt que de leur donner le poisson.", en: "Constant financial support weakens kids' independence. Teach them to fish rather than handing them the fish." } },
-      { kind: 'quote', title: { fr: "« La richesse, c'est ce que tu accumules, pas ce que tu dépenses. »", en: '"Wealth is what you accumulate, not what you spend."' }, attribution: 'Stanley & Danko' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Le patrimoine se construit discrètement, par la frugalité et la constance, bien plus que par un gros salaire dépensé aussitôt.", en: 'Wealth is built quietly, through frugality and consistency, far more than by a big salary spent right away.' } },
-    ],
-  },
-
-  // ─────────────────────────────  MANAGEMENT  ─────────────────────────────
-  {
-    id: 'high-output-management',
-    title: 'High Output Management',
-    author: 'Andrew S. Grove',
-    publisher: { fr: 'Management', en: 'Management' },
-    handle: 'mgmtlibrary',
-    caption: { fr: "Le manuel de management du légendaire CEO d'Intel. 🛠️", en: "The management bible from Intel's legendary CEO. 🛠️" },
-    tags: ['management', 'leverage', 'okr', 'teams'],
-    theme: { from: '#1d4ed8', to: '#1e3a8a', text: '#eff6ff' },
-    glyph: '🛠️',
-    readTime: '7 h',
-    likes: 22600,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'MANAGEMENT', en: 'MANAGEMENT' }, title: 'High Output Management', body: { fr: 'Le manuel de référence du management — Andrew S. Grove', en: 'The reference manual of management — Andrew S. Grove' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: "L'output du manager", en: "A manager's output" }, body: { fr: "Ton résultat = celui de ton équipe + celui des équipes que tu influences. Tu es jugé sur leur production, pas la tienne.", en: "Your output = your team's + the teams you influence. You're judged on their output, not your own." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Le levier managérial', en: 'Managerial leverage' }, body: { fr: "Concentre ton temps sur les activités à fort levier : former, définir des standards, décider tôt. Une heure bien placée en démultiplie cent.", en: 'Spend your time on high-leverage activities: training, setting standards, deciding early. One well-placed hour multiplies a hundred.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Le 1:1, outil le plus rentable', en: 'The 1:1, highest-ROI tool' }, body: { fr: "Le point individuel est ton meilleur levier : information, coaching, correction de trajectoire. Prépare-le, il appartient au collaborateur.", en: 'The one-on-one is your best lever: information, coaching, course-correction. Prepare for it — it belongs to your report.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Mesure avec des OKR', en: 'Measure with OKRs' }, body: { fr: "Suis des indicateurs jumelés (quantité + qualité). Grove a inventé les OKR, qui inspireront plus tard Google.", en: 'Track paired indicators (quantity + quality). Grove pioneered OKRs, later adopted by Google.' } },
-      { kind: 'quote', title: { fr: "« Le résultat d'un manager est le résultat des unités qu'il dirige ou influence. »", en: '"A manager\'s output is the output of the organizational units under their supervision or influence."' }, attribution: 'Andrew S. Grove' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Cherche partout l'effet de levier : forme tes équipes, standardise, et investis ton temps là où il démultiplie le résultat des autres.", en: "Hunt for leverage everywhere: train your teams, standardize, and spend your time where it multiplies others' output." } },
-    ],
+    "id": "invent-and-wander",
+    "title": "Invent and Wander",
+    "author": "Jeff Bezos",
+    "publisher": {
+      "fr": "Autobiographie",
+      "en": "Memoir"
+    },
+    "handle": "jeffbezos",
+    "theme": {
+      "from": "#c2410c",
+      "to": "#431407",
+      "text": "#fff7ed"
+    },
+    "glyph": "📦",
+    "readTime": "8 h"
   },
   {
-    id: 'radical-candor',
-    title: 'Radical Candor',
-    author: 'Kim Scott',
-    publisher: { fr: 'Management', en: 'Management' },
-    handle: 'mgmtlibrary',
-    caption: { fr: "Dire les choses franchement, tout en montrant qu'on tient à l'autre. 🗣️", en: 'Say it straight, while showing you care personally. 🗣️' },
-    tags: ['feedback', 'management', 'candor', 'relationships'],
-    theme: { from: '#db2777', to: '#831843', text: '#fdf2f8' },
-    glyph: '🗣️',
-    readTime: '6 h',
-    likes: 20100,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'MANAGEMENT', en: 'MANAGEMENT' }, title: 'Radical Candor', body: { fr: 'Être un boss exigeant sans perdre son humanité — Kim Scott', en: 'Be a kick-ass boss without losing your humanity — Kim Scott' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Se soucier + défier directement', en: 'Care personally + challenge directly' }, body: { fr: "La franchise radicale = tenir sincèrement à la personne ET oser lui dire la vérité. Les deux à la fois, jamais l'un sans l'autre.", en: 'Radical candor = caring personally AND challenging directly. Both at once, never one without the other.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: 'Les 3 pièges à éviter', en: 'The 3 traps to avoid' }, body: { fr: "Empathie ruineuse (gentil mais pas franc), agressivité déplaisante (franc mais pas humain), fausseté manipulatrice (ni l'un ni l'autre).", en: 'Ruinous empathy (nice but not honest), obnoxious aggression (honest but not human), manipulative insincerity (neither).' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "Sollicite d'abord la critique", en: 'Solicit criticism first' }, body: { fr: "Avant de critiquer, demande qu'on te critique, toi. Écoute sans te défendre, et récompense la franchise reçue.", en: 'Before criticizing, ask to be criticized yourself. Listen without defending, and reward the candor you receive.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Feedback immédiat et sincère', en: 'Immediate, sincere feedback' }, body: { fr: "Corrige en privé, félicite en public, tout de suite, avec humilité et bienveillance. Le feedback tardif perd toute valeur.", en: 'Criticize in private, praise in public, right away, with humility and care. Late feedback loses all its value.' } },
-      { kind: 'quote', title: { fr: "« Tenir à quelqu'un ne veut pas dire éviter de lui dire ce qu'il doit entendre. »", en: '"Caring personally doesn\'t mean avoiding telling people what they need to hear."' }, attribution: 'Kim Scott' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "La bienveillance sans franchise n'aide personne. Ose la vérité utile — à condition de prouver d'abord que tu tiens vraiment à l'autre.", en: 'Kindness without candor helps no one. Dare to say the useful truth — as long as you first prove you truly care.' } },
-    ],
+    "id": "atomic-habits",
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "publisher": {
+      "fr": "Développement personnel",
+      "en": "Personal Growth"
+    },
+    "handle": "growthlibrary",
+    "theme": {
+      "from": "#10b981",
+      "to": "#065f46",
+      "text": "#ecfdf5"
+    },
+    "glyph": "⚛️",
+    "readTime": "5 h"
   },
   {
-    id: 'five-dysfunctions',
-    title: 'The Five Dysfunctions of a Team',
-    author: 'Patrick Lencioni',
-    publisher: { fr: 'Management', en: 'Management' },
-    handle: 'mgmtlibrary',
-    caption: { fr: 'Pourquoi les équipes échouent — et comment y remédier. 🧱', en: 'Why teams fail — and how to fix it. 🧱' },
-    tags: ['teams', 'trust', 'conflict', 'leadership'],
-    theme: { from: '#0e7490', to: '#164e63', text: '#ecfeff' },
-    glyph: '🧱',
-    readTime: '5 h',
-    likes: 17400,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'MANAGEMENT', en: 'MANAGEMENT' }, title: 'The Five Dysfunctions of a Team', body: { fr: 'Une fable sur le leadership — Patrick Lencioni', en: 'A leadership fable — Patrick Lencioni' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: "1. L'absence de confiance", en: '1. Absence of trust' }, body: { fr: "Sans vulnérabilité (oser dire « je me suis trompé »), pas de vraie confiance. C'est la fondation de tout le reste.", en: 'Without vulnerability (daring to say "I was wrong"), there\'s no real trust. It\'s the foundation of everything else.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: '2. La peur du conflit', en: '2. Fear of conflict' }, body: { fr: "Les bonnes équipes se disputent sur les idées. L'harmonie artificielle ne fait que cacher des désaccords non réglés.", en: 'Great teams argue about ideas. Artificial harmony only hides unresolved disagreements.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: "3. Le manque d'engagement", en: '3. Lack of commitment' }, body: { fr: "Sans débat franc, pas d'adhésion réelle aux décisions. La clarté et l'engagement priment sur le consensus mou.", en: 'Without honest debate, no real buy-in to decisions. Clarity and commitment beat soft consensus.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: '4 & 5. Responsabilité & résultats', en: '4 & 5. Accountability & results' }, body: { fr: "Les membres doivent se tenir mutuellement responsables et viser le résultat collectif, pas leur ego ou leur statut.", en: 'Members must hold each other accountable and pursue the collective result, not their ego or status.' } },
-      { kind: 'quote', title: { fr: "« Le travail d'équipe reste l'ultime avantage compétitif. »", en: '"Teamwork remains the ultimate competitive advantage."' }, attribution: 'Patrick Lencioni' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Bâtis d'abord la confiance par la vulnérabilité ; tout le reste (conflit sain, engagement, responsabilité, résultats) en découle.", en: 'Build trust through vulnerability first; everything else (healthy conflict, commitment, accountability, results) follows.' } },
-    ],
+    "id": "deep-work",
+    "title": "Deep Work",
+    "author": "Cal Newport",
+    "publisher": {
+      "fr": "Développement personnel",
+      "en": "Personal Growth"
+    },
+    "handle": "growthlibrary",
+    "theme": {
+      "from": "#1e3a8a",
+      "to": "#0f172a",
+      "text": "#eff6ff"
+    },
+    "glyph": "🎯",
+    "readTime": "6 h"
   },
   {
-    id: 'measure-what-matters',
-    title: 'Measure What Matters',
-    author: 'John Doerr',
-    publisher: { fr: 'Management', en: 'Management' },
-    handle: 'mgmtlibrary',
-    caption: { fr: 'Les OKR : la méthode qui a propulsé Google. 🚩', en: 'OKRs: the goal-setting method that propelled Google. 🚩' },
-    tags: ['okr', 'goals', 'focus', 'execution'],
-    theme: { from: '#ca8a04', to: '#713f12', text: '#fefce8' },
-    glyph: '🚩',
-    readTime: '7 h',
-    likes: 19200,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'MANAGEMENT', en: 'MANAGEMENT' }, title: 'Measure What Matters', body: { fr: 'Comment Google et d’autres changent le monde avec les OKR — John Doerr', en: 'How Google and others rock the world with OKRs — John Doerr' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Objectif + Résultats clés', en: 'Objective + Key Results' }, body: { fr: "Un Objectif (le QUOI, inspirant) porté par 3 à 5 Résultats clés (le COMMENT, mesurables et datés).", en: 'An Objective (the WHAT, inspiring) supported by 3-5 Key Results (the HOW, measurable and time-bound).' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: "Se concentrer et s'engager", en: 'Focus and commit' }, body: { fr: "Peu d'objectifs, mais les bons. Dire non à l'accessoire pour tout donner à l'essentiel.", en: 'Few objectives, but the right ones. Say no to the trivial to give everything to the essential.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Aligner et rendre transparent', en: 'Align and make transparent' }, body: { fr: "Rends les OKR publics et transversaux : chacun voit comment son travail sert celui des autres.", en: "Make OKRs public and cross-functional: everyone sees how their work connects to others'." } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: 'Viser haut (stretch)', en: 'Stretch for amazing' }, body: { fr: "Vise des objectifs ambitieux : atteindre 70% d'un OKR audacieux vaut mieux que 100% d'un objectif timide.", en: 'Aim for ambitious goals: hitting 70% of a bold OKR beats 100% of a timid one.' } },
-      { kind: 'quote', title: { fr: "« Les idées sont faciles. C'est l'exécution qui compte. »", en: '"Ideas are easy. Execution is everything."' }, attribution: 'John Doerr' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "Fixe peu d'objectifs inspirants, mesure-les par des résultats clés chiffrés, rends-les transparents, et ose viser grand.", en: 'Set a few inspiring objectives, measure them with numeric key results, make them transparent, and dare to aim high.' } },
-    ],
+    "id": "seven-habits",
+    "title": "The 7 Habits of Highly Effective People",
+    "author": "Stephen R. Covey",
+    "publisher": {
+      "fr": "Développement personnel",
+      "en": "Personal Growth"
+    },
+    "handle": "growthlibrary",
+    "theme": {
+      "from": "#b45309",
+      "to": "#451a03",
+      "text": "#fffbeb"
+    },
+    "glyph": "🌳",
+    "readTime": "9 h"
   },
   {
-    id: 'good-to-great',
-    title: 'Good to Great',
-    author: 'Jim Collins',
-    publisher: { fr: 'Management', en: 'Management' },
-    handle: 'mgmtlibrary',
-    caption: { fr: "Pourquoi certaines entreprises passent de bonnes à excellentes. 🏔️", en: 'Why some companies make the leap from good to great. 🏔️' },
-    tags: ['strategy', 'leadership', 'discipline', 'greatness'],
-    theme: { from: '#334155', to: '#0f172a', text: '#f1f5f9' },
-    glyph: '🏔️',
-    readTime: '9 h',
-    likes: 23800,
-    slides: [
-      { kind: 'cover', eyebrow: { fr: 'MANAGEMENT', en: 'MANAGEMENT' }, title: 'Good to Great', body: { fr: "Pourquoi certaines entreprises font le grand saut… et d'autres non — Jim Collins", en: "Why some companies make the leap… and others don't — Jim Collins" } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 01', en: 'KEY TAKEAWAY 01' }, title: { fr: 'Le leadership de niveau 5', en: 'Level 5 leadership' }, body: { fr: "Les meilleurs dirigeants mêlent une humilité personnelle intense et une volonté professionnelle féroce. L'ambition pour l'entreprise, pas pour l'ego.", en: 'The best leaders blend deep personal humility with fierce professional will. Ambition for the company, not the ego.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 02', en: 'KEY TAKEAWAY 02' }, title: { fr: "D'abord qui, ensuite quoi", en: 'First who, then what' }, body: { fr: "Mets les bonnes personnes dans le bus avant de décider où il va. La bonne équipe s'adapte à tout.", en: 'Get the right people on the bus before deciding where it goes. The right team adapts to anything.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 03', en: 'KEY TAKEAWAY 03' }, title: { fr: 'Le concept du hérisson', en: 'The Hedgehog concept' }, body: { fr: "Trouve l'intersection de trois cercles : ta passion, ce où tu peux être le meilleur au monde, et ce qui fait tourner ton moteur économique.", en: 'Find the intersection of three circles: your passion, what you can be best in the world at, and what drives your economic engine.' } },
-      { kind: 'point', eyebrow: { fr: 'POINT CLÉ 04', en: 'KEY TAKEAWAY 04' }, title: { fr: "Le volant d'inertie", en: 'The flywheel' }, body: { fr: "Pas de moment miracle : une accumulation de poussées cohérentes finit par créer un élan irrésistible.", en: 'No miracle moment: an accumulation of consistent pushes eventually builds unstoppable momentum.' } },
-      { kind: 'quote', title: { fr: "« Le bien est l'ennemi du grand. »", en: '"Good is the enemy of great."' }, attribution: 'Jim Collins' },
-      { kind: 'takeaway', eyebrow: { fr: 'À RETENIR', en: 'REMEMBER' }, title: { fr: 'À retenir', en: 'Takeaway' }, body: { fr: "La grandeur n'est pas une affaire de chance mais de discipline : les bonnes personnes, une idée simple (le hérisson), et la constance du volant d'inertie.", en: 'Greatness isn\'t luck but discipline: the right people, one simple idea (the hedgehog), and flywheel consistency.' } },
-    ],
+    "id": "mindset",
+    "title": "Mindset",
+    "author": "Carol S. Dweck",
+    "publisher": {
+      "fr": "Développement personnel",
+      "en": "Personal Growth"
+    },
+    "handle": "growthlibrary",
+    "theme": {
+      "from": "#7c3aed",
+      "to": "#4c1d95",
+      "text": "#f5f3ff"
+    },
+    "glyph": "💡",
+    "readTime": "6 h"
   },
+  {
+    "id": "mans-search-for-meaning",
+    "title": "Man's Search for Meaning",
+    "author": "Viktor E. Frankl",
+    "publisher": {
+      "fr": "Développement personnel",
+      "en": "Personal Growth"
+    },
+    "handle": "growthlibrary",
+    "theme": {
+      "from": "#3f3f46",
+      "to": "#18181b",
+      "text": "#fafafa"
+    },
+    "glyph": "🕯️",
+    "readTime": "4 h"
+  },
+  {
+    "id": "psychology-of-money",
+    "title": "The Psychology of Money",
+    "author": "Morgan Housel",
+    "publisher": {
+      "fr": "Finances personnelles",
+      "en": "Personal Finance"
+    },
+    "handle": "moneylibrary",
+    "theme": {
+      "from": "#047857",
+      "to": "#064e3b",
+      "text": "#ecfdf5"
+    },
+    "glyph": "💵",
+    "readTime": "5 h"
+  },
+  {
+    "id": "rich-dad-poor-dad",
+    "title": "Rich Dad Poor Dad",
+    "author": "Robert T. Kiyosaki",
+    "publisher": {
+      "fr": "Finances personnelles",
+      "en": "Personal Finance"
+    },
+    "handle": "moneylibrary",
+    "theme": {
+      "from": "#b91c1c",
+      "to": "#450a0a",
+      "text": "#fef2f2"
+    },
+    "glyph": "🏦",
+    "readTime": "5 h"
+  },
+  {
+    "id": "richest-man-in-babylon",
+    "title": "The Richest Man in Babylon",
+    "author": "George S. Clason",
+    "publisher": {
+      "fr": "Finances personnelles",
+      "en": "Personal Finance"
+    },
+    "handle": "moneylibrary",
+    "theme": {
+      "from": "#a16207",
+      "to": "#422006",
+      "text": "#fefce8"
+    },
+    "glyph": "🏺",
+    "readTime": "3 h"
+  },
+  {
+    "id": "millionaire-next-door",
+    "title": "The Millionaire Next Door",
+    "author": "Stanley & Danko",
+    "publisher": {
+      "fr": "Finances personnelles",
+      "en": "Personal Finance"
+    },
+    "handle": "moneylibrary",
+    "theme": {
+      "from": "#065f46",
+      "to": "#022c22",
+      "text": "#ecfdf5"
+    },
+    "glyph": "🏡",
+    "readTime": "6 h"
+  },
+  {
+    "id": "high-output-management",
+    "title": "High Output Management",
+    "author": "Andrew S. Grove",
+    "publisher": {
+      "fr": "Management",
+      "en": "Management"
+    },
+    "handle": "mgmtlibrary",
+    "theme": {
+      "from": "#1d4ed8",
+      "to": "#1e3a8a",
+      "text": "#eff6ff"
+    },
+    "glyph": "🛠️",
+    "readTime": "7 h"
+  },
+  {
+    "id": "radical-candor",
+    "title": "Radical Candor",
+    "author": "Kim Scott",
+    "publisher": {
+      "fr": "Management",
+      "en": "Management"
+    },
+    "handle": "mgmtlibrary",
+    "theme": {
+      "from": "#db2777",
+      "to": "#831843",
+      "text": "#fdf2f8"
+    },
+    "glyph": "🗣️",
+    "readTime": "6 h"
+  },
+  {
+    "id": "five-dysfunctions",
+    "title": "The Five Dysfunctions of a Team",
+    "author": "Patrick Lencioni",
+    "publisher": {
+      "fr": "Management",
+      "en": "Management"
+    },
+    "handle": "mgmtlibrary",
+    "theme": {
+      "from": "#0e7490",
+      "to": "#164e63",
+      "text": "#ecfeff"
+    },
+    "glyph": "🧱",
+    "readTime": "5 h"
+  },
+  {
+    "id": "measure-what-matters",
+    "title": "Measure What Matters",
+    "author": "John Doerr",
+    "publisher": {
+      "fr": "Management",
+      "en": "Management"
+    },
+    "handle": "mgmtlibrary",
+    "theme": {
+      "from": "#ca8a04",
+      "to": "#713f12",
+      "text": "#fefce8"
+    },
+    "glyph": "🚩",
+    "readTime": "7 h"
+  },
+  {
+    "id": "good-to-great",
+    "title": "Good to Great",
+    "author": "Jim Collins",
+    "publisher": {
+      "fr": "Management",
+      "en": "Management"
+    },
+    "handle": "mgmtlibrary",
+    "theme": {
+      "from": "#334155",
+      "to": "#0f172a",
+      "text": "#f1f5f9"
+    },
+    "glyph": "🏔️",
+    "readTime": "9 h"
+  }
 ]
 
-function localizeSlide(lang: Lang, s: RawSlide): Slide {
+const metaById = new Map(bookMeta.map((b) => [b.id, b]))
+
+// Like seed déterministe à partir de l'id du post.
+function seedLikes(id: string): number {
+  let h = 0
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0
+  return 6000 + (h % 39000)
+}
+
+function localizeSlide(lang: Lang, s: RawSlide, coverEyebrow: string, pointN: number): Slide {
+  let eyebrow: string | undefined
+  if (s.eyebrow !== undefined) eyebrow = pick(lang, s.eyebrow)
+  else if (s.kind === 'cover') eyebrow = coverEyebrow
+  else if (s.kind === 'point')
+    eyebrow = (lang === 'fr' ? 'POINT CLÉ ' : 'KEY POINT ') + String(pointN).padStart(2, '0')
+  else if (s.kind === 'quote') eyebrow = lang === 'fr' ? 'CITATION' : 'QUOTE'
+  else eyebrow = lang === 'fr' ? 'À RETENIR' : 'REMEMBER'
   return {
     kind: s.kind,
-    eyebrow: s.eyebrow === undefined ? undefined : pick(lang, s.eyebrow),
+    eyebrow,
     title: pick(lang, s.title),
     body: s.body === undefined ? undefined : pick(lang, s.body),
     attribution: s.attribution === undefined ? undefined : pick(lang, s.attribution),
   }
 }
 
-function localizeBook(lang: Lang, b: RawBook): Book {
+function localizePost(lang: Lang, meta: BookMeta, raw: RawPost, index: number): Post {
+  const coverEyebrow = pick(lang, meta.publisher).toUpperCase()
+  let pointN = 0
+  const slides = raw.slides.map((s) => {
+    if (s.kind === 'point' && s.eyebrow === undefined) pointN += 1
+    return localizeSlide(lang, s, coverEyebrow, pointN)
+  })
+  const id = meta.id + '::' + index
   return {
-    ...b,
-    publisher: pick(lang, b.publisher),
-    caption: pick(lang, b.caption),
-    slides: b.slides.map((s) => localizeSlide(lang, s)),
+    id,
+    bookId: meta.id,
+    title: meta.title,
+    author: meta.author,
+    publisher: pick(lang, meta.publisher),
+    handle: meta.handle,
+    theme: meta.theme,
+    glyph: meta.glyph,
+    readTime: meta.readTime,
+    concept: pick(lang, raw.concept),
+    caption: pick(lang, raw.caption),
+    tags: raw.tags,
+    likes: raw.likes ?? seedLikes(id),
+    slides,
   }
 }
 
-/** All books, with text resolved to the given language. */
-export function getBooks(lang: Lang): Book[] {
-  return rawBooks.map((b) => localizeBook(lang, b))
+/** Tous les posts, texte résolu dans la langue donnée, dans l'ordre des livres. */
+export function getPosts(lang: Lang): Post[] {
+  const out: Post[] = []
+  for (const meta of bookMeta) {
+    const raws = postsByBook[meta.id] ?? []
+    raws.forEach((raw, i) => out.push(localizePost(lang, meta, raw, i)))
+  }
+  return out
 }
+
+export { metaById }
