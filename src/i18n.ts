@@ -30,6 +30,7 @@ export interface UIStrings {
   headerSaved: string
   headerProfile: string
   optionsLabel: string
+  buyBook: string
   likeLabel: string
   shareLabel: string
   saveLabel: string
@@ -75,6 +76,7 @@ const dict: Record<Lang, UIStrings> = {
     headerSaved: 'Enregistrés',
     headerProfile: 'Profil',
     optionsLabel: 'Options',
+    buyBook: 'Acheter le livre',
     likeLabel: "J'aime",
     shareLabel: 'Partager',
     saveLabel: 'Enregistrer',
@@ -117,6 +119,7 @@ const dict: Record<Lang, UIStrings> = {
     headerSaved: 'Saved',
     headerProfile: 'Profile',
     optionsLabel: 'Options',
+    buyBook: 'Buy the book',
     likeLabel: 'Like',
     shareLabel: 'Share',
     saveLabel: 'Save',

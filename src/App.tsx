@@ -64,7 +64,6 @@ export default function App() {
             {tab === 'saved' && <SavedView posts={savedPosts} onOpen={setOpenId} />}
             {tab === 'profile' && (
               <ProfileView
-                allPosts={posts}
                 likedPosts={likedPosts}
                 savedCount={saved.set.size}
                 bookCount={bookMeta.length}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Post as PostType } from '../types'
 import { Post } from './Post'
 import { useLang } from '../lang'
@@ -24,6 +24,8 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
+const PAGE = 6 // posts rendus par palier (chargement progressif au scroll)
+
 export function Feed({ posts, consumed, isLiked, isSaved, toggleLike, toggleSave, markRead }: FeedProps) {
   const { t } = useLang()
 
@@ -36,7 +38,25 @@ export function Feed({ posts, consumed, isLiked, isSaved, toggleLike, toggleSave
   const byId = useMemo(() => new Map(posts.map((p) => [p.id, p])), [posts])
   const feedPosts = orderedIds.map((id) => byId.get(id)).filter((p): p is PostType => Boolean(p))
 
-  if (feedPosts.length === 0) {
+  // Rendu progressif : on ne monte pas les 300+ posts d'un coup (crash mobile).
+  const [limit, setLimit] = useState(PAGE)
+  const sentinel = useRef<HTMLDivElement>(null)
+  const total = feedPosts.length
+
+  useEffect(() => {
+    const el = sentinel.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) setLimit((l) => Math.min(l + PAGE, total))
+      },
+      { rootMargin: '800px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [total])
+
+  if (total === 0) {
     return (
       <div className="flex flex-col items-center justify-center text-center px-8 py-24 text-muted">
         <div className="brand text-3xl text-muted mb-2">still</div>
@@ -45,9 +65,12 @@ export function Feed({ posts, consumed, isLiked, isSaved, toggleLike, toggleSave
     )
   }
 
+  const shown = feedPosts.slice(0, limit)
+  const hasMore = limit < total
+
   return (
     <div>
-      {feedPosts.map((post) => (
+      {shown.map((post) => (
         <Post
           key={post.id}
           post={post}
@@ -58,10 +81,16 @@ export function Feed({ posts, consumed, isLiked, isSaved, toggleLike, toggleSave
           onRead={markRead}
         />
       ))}
-      <div className="py-10 text-center text-faint text-sm">
-        <div className="brand text-2xl text-muted mb-1">still</div>
-        {t.feedEnd}
-      </div>
+
+      {/* sentinelle : déclenche le chargement du palier suivant */}
+      {hasMore && <div ref={sentinel} className="h-1" aria-hidden />}
+
+      {!hasMore && (
+        <div className="py-10 text-center text-faint text-sm">
+          <div className="brand text-2xl text-muted mb-1">still</div>
+          {t.feedEnd}
+        </div>
+      )}
     </div>
   )
 }

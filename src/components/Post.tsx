@@ -14,10 +14,18 @@ interface PostProps {
 }
 
 export function Post({ post, liked, saved, onToggleLike, onToggleSave, onRead }: PostProps) {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const [burst, setBurst] = useState(false)
   const [showFull, setShowFull] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  function buy() {
+    const domain = lang === 'fr' ? 'fr' : 'com'
+    const q = encodeURIComponent(`${post.title} ${post.author}`)
+    window.open(`https://www.amazon.${domain}/s?k=${q}`, '_blank', 'noopener,noreferrer')
+    setMenuOpen(false)
+  }
 
   function doLike() {
     if (!liked) {
@@ -56,7 +64,7 @@ export function Post({ post, liked, saved, onToggleLike, onToggleSave, onRead }:
   }
 
   return (
-    <article className="border-b border-line pb-2">
+    <article className="border-b border-line pb-3 mb-4 md:mb-8">
       {/* header */}
       <header className="flex items-center gap-3 px-3.5 py-2.5">
         <div
@@ -73,7 +81,31 @@ export function Post({ post, liked, saved, onToggleLike, onToggleSave, onRead }:
           <div className="text-sm font-semibold leading-tight">{post.handle}</div>
           <div className="text-[11px] text-muted leading-tight truncate">{post.title} · {post.author}</div>
         </div>
-        <button className="text-muted text-xl leading-none px-2" aria-label={t.optionsLabel}>⋯</button>
+        <div className="relative">
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            className="text-muted text-xl leading-none px-2"
+            aria-label={t.optionsLabel}
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+          >
+            ⋯
+          </button>
+          {menuOpen && (
+            <>
+              <div className="fixed inset-0 z-20" onClick={() => setMenuOpen(false)} />
+              <div className="absolute right-0 top-full mt-1 z-30 w-48 rounded-xl border border-line bg-page shadow-lg overflow-hidden" role="menu">
+                <button
+                  onClick={buy}
+                  role="menuitem"
+                  className="w-full text-left px-4 py-2.5 text-sm hover:bg-surface flex items-center gap-2"
+                >
+                  <span aria-hidden>🛒</span> {t.buyBook}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </header>
 
       {/* carousel with double-tap-to-like; reaching the last card marks it read */}

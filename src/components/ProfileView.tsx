@@ -4,14 +4,13 @@ import { useLang } from '../lang'
 import { useTheme, type ThemeMode } from '../theme'
 
 interface ProfileViewProps {
-  allPosts: Post[]
   likedPosts: Post[]
   savedCount: number
   bookCount: number
   onOpen: (id: string) => void
 }
 
-export function ProfileView({ allPosts, likedPosts, savedCount, bookCount, onOpen }: ProfileViewProps) {
+export function ProfileView({ likedPosts, savedCount, bookCount, onOpen }: ProfileViewProps) {
   const { t, lang, setLang } = useLang()
   const { mode, setMode } = useTheme()
 
@@ -22,10 +21,9 @@ export function ProfileView({ allPosts, likedPosts, savedCount, bookCount, onOpe
           <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl bg-gradient-to-br from-fuchsia-600 to-indigo-700 text-white">
             📚
           </div>
-          <div className="flex-1 grid grid-cols-3 text-center">
+          <div className="flex-1 grid grid-cols-2 text-center">
             <Stat n={likedPosts.length} label={t.statLiked} />
             <Stat n={savedCount} label={t.statSaved} />
-            <Stat n={allPosts.length} label={t.statCards} />
           </div>
         </div>
         <div className="mt-3">
