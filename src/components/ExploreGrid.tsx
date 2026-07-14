@@ -12,9 +12,10 @@ export function ExploreGrid({ posts, onOpen }: ExploreGridProps) {
   const { t } = useLang()
   const [query, setQuery] = useState('')
 
+  const q = query.trim().toLowerCase()
+
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (!q) return posts
+    if (!q) return []
     return posts.filter(
       (p) =>
         p.title.toLowerCase().includes(q) ||
@@ -23,7 +24,7 @@ export function ExploreGrid({ posts, onOpen }: ExploreGridProps) {
         p.concept.toLowerCase().includes(q) ||
         p.tags.some((tag) => tag.includes(q)),
     )
-  }, [posts, query])
+  }, [posts, q])
 
   return (
     <div className="pb-4">
@@ -35,9 +36,19 @@ export function ExploreGrid({ posts, onOpen }: ExploreGridProps) {
           className="w-full bg-surface rounded-xl px-4 py-2.5 text-sm placeholder:text-faint outline-none focus:ring-1 focus:ring-neutral-600"
         />
       </div>
-      <GridTiles posts={filtered} onOpen={onOpen} />
-      {filtered.length === 0 && (
+
+      {!q ? (
+        <div className="flex flex-col items-center justify-center text-center px-8 py-24 text-faint">
+          <svg viewBox="0 0 24 24" className="w-12 h-12 mb-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <p className="text-sm leading-relaxed max-w-[16rem]">{t.searchHint}</p>
+        </div>
+      ) : filtered.length === 0 ? (
         <p className="text-center text-faint text-sm py-10">{t.noResults(query)}</p>
+      ) : (
+        <GridTiles posts={filtered} onOpen={onOpen} />
       )}
     </div>
   )

@@ -41,7 +41,7 @@ export function BookModal({ post, liked, saved, onToggleLike, onToggleSave, onRe
           <button onClick={onClose} aria-label={t.closeLabel} className="text-2xl text-muted px-2 leading-none">×</button>
         </div>
 
-        <div className="rounded-xl overflow-hidden mx-2">
+        <div className="mx-2">
           <Carousel post={post} onComplete={() => onRead(post.id)} />
         </div>
 

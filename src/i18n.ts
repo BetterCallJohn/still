@@ -6,6 +6,7 @@ export interface UIStrings {
   navSaved: string
   navProfile: string
   searchPlaceholder: string
+  searchHint: string
   noResults: (q: string) => string
   viewCards: (n: number) => string
   swipeNext: string
@@ -48,6 +49,7 @@ const dict: Record<Lang, UIStrings> = {
     navSaved: 'Enregistrés',
     navProfile: 'Profil',
     searchPlaceholder: 'Rechercher un livre, un auteur, un thème…',
+    searchHint: 'Cherche un livre, un auteur ou un concept pour explorer.',
     noResults: (q) => `Aucun résultat pour « ${q} »`,
     viewCards: (n) => `… voir les ${n} fiches`,
     swipeNext: '✦ swipe pour le suivant',
@@ -90,6 +92,7 @@ const dict: Record<Lang, UIStrings> = {
     navSaved: 'Saved',
     navProfile: 'Profile',
     searchPlaceholder: 'Search a book, an author, a topic…',
+    searchHint: 'Search a book, author, or concept to explore.',
     noResults: (q) => `No results for “${q}”`,
     viewCards: (n) => `… view all ${n} cards`,
     swipeNext: '✦ swipe for the next',

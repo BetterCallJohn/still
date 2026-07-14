@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Post, Slide } from '../types'
 import { ClockIcon } from './Icons'
 import { useLang } from '../lang'
@@ -81,8 +81,32 @@ export function Carousel({ post, onComplete }: { post: Post; onComplete?: () => 
     el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' })
   }
 
+  // Navigation clavier (desktop) : ← / → quand le curseur survole le carrousel.
+  const [hovered, setHovered] = useState(false)
+  useEffect(() => {
+    if (!hovered) return
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        go(-1)
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        go(1)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [hovered])
+
+  const arrowClass =
+    'hidden md:flex absolute top-1/2 -translate-y-1/2 w-9 h-9 items-center justify-center rounded-full border border-line bg-surface text-ink hover:bg-line shadow-sm z-10'
+
   return (
-    <div className="group relative w-full aspect-[4/5] bg-page">
+    <div
+      className="relative w-full aspect-[4/5] bg-page"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <div
         ref={scroller}
         onScroll={onScroll}
@@ -93,13 +117,14 @@ export function Carousel({ post, onComplete }: { post: Post; onComplete?: () => 
         ))}
       </div>
 
-      {/* desktop nav arrows (hover) — hidden on mobile so touch stays swipe-only */}
+      {/* desktop nav arrows — déportées à l'extérieur de l'image (gauche/droite).
+          Masquées sur mobile : le swipe reste le seul mode tactile. */}
       {active > 0 && (
         <button
           type="button"
           aria-label="Précédent"
           onClick={() => go(-1)}
-          className="hidden md:group-hover:flex absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 items-center justify-center rounded-full bg-black/40 hover:bg-black/60 text-white backdrop-blur-sm z-10"
+          className={`${arrowClass} right-full mr-3`}
         >
           <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
         </button>
@@ -109,7 +134,7 @@ export function Carousel({ post, onComplete }: { post: Post; onComplete?: () => 
           type="button"
           aria-label="Suivant"
           onClick={() => go(1)}
-          className="hidden md:group-hover:flex absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 items-center justify-center rounded-full bg-black/40 hover:bg-black/60 text-white backdrop-blur-sm z-10"
+          className={`${arrowClass} left-full ml-3`}
         >
           <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
         </button>
