@@ -23,6 +23,8 @@ export interface UIStrings {
   journeyBody: (n: number) => string
   likedRecent: string
   allLibrary: string
+  likesTitle: string
+  likesEmpty: string
   headerExplore: string
   headerSaved: string
   headerProfile: string
@@ -65,6 +67,8 @@ const dict: Record<Lang, UIStrings> = {
       `${n} livres startup, à un swipe. Commence par la collection Stripe Press. ✦`,
     likedRecent: 'Aimés récemment',
     allLibrary: 'Toute la bibliothèque',
+    likesTitle: "Tes j'aime",
+    likesEmpty: "Aucun post aimé pour l'instant. Appuie sur ❤️ pour les retrouver ici.",
     headerExplore: 'Explorer',
     headerSaved: 'Enregistrés',
     headerProfile: 'Profil',
@@ -104,6 +108,8 @@ const dict: Record<Lang, UIStrings> = {
     journeyBody: (n) => `${n} startup books, one swipe away. Start with the Stripe Press collection. ✦`,
     likedRecent: 'Recently liked',
     allLibrary: 'The whole library',
+    likesTitle: 'Your likes',
+    likesEmpty: 'No liked posts yet. Tap ❤️ to find them here.',
     headerExplore: 'Explore',
     headerSaved: 'Saved',
     headerProfile: 'Profile',

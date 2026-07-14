@@ -65,9 +65,13 @@ export function ProfileView({ allPosts, likedPosts, savedCount, bookCount, onOpe
       </div>
 
       <div className="px-4 pb-2 text-sm font-semibold text-muted border-t border-line pt-3">
-        {likedPosts.length > 0 ? t.likedRecent : t.allLibrary}
+        {t.likesTitle}
       </div>
-      <GridTiles posts={likedPosts.length > 0 ? likedPosts : allPosts} onOpen={onOpen} />
+      {likedPosts.length > 0 ? (
+        <GridTiles posts={likedPosts} onOpen={onOpen} />
+      ) : (
+        <p className="px-8 py-16 text-center text-faint text-sm leading-relaxed">{t.likesEmpty}</p>
+      )}
     </div>
   )
 }
