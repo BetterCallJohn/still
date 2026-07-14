@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Post, Slide } from '../types'
-import { useLang } from '../lang'
 
 function SlideCard({ slide, post, index, total }: { slide: Slide; post: Post; index: number; total: number }) {
   const { theme } = post
-  const { t } = useLang()
   return (
     <div
       className="snap-center shrink-0 w-full h-full relative flex flex-col justify-between p-7 select-none"
@@ -44,11 +42,7 @@ function SlideCard({ slide, post, index, total }: { slide: Slide; post: Post; in
       {/* footer */}
       <div className="flex items-center justify-between text-[11px] font-semibold opacity-70">
         <span className="truncate pr-2">{post.title} · {post.author}</span>
-        {slide.kind === 'takeaway' ? (
-          <span className="shrink-0">{t.swipeNext}</span>
-        ) : (
-          <span className="brand text-base opacity-90 shrink-0">still</span>
-        )}
+        <span className="brand text-base opacity-90 shrink-0">still</span>
       </div>
     </div>
   )
