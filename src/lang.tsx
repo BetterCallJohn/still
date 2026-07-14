@@ -12,14 +12,21 @@ interface LangValue {
 const LangContext = createContext<LangValue | null>(null)
 
 function initialLang(): Lang {
+  // 1) Préférence déjà choisie par l'utilisateur (persistée).
   try {
     const saved = localStorage.getItem('still.lang')
     if (saved === 'en' || saved === 'fr') return saved
   } catch {
     /* ignore */
   }
-  const nav = typeof navigator !== 'undefined' ? navigator.language.toLowerCase() : 'fr'
-  return nav.startsWith('en') ? 'en' : 'fr'
+  // 2) Détection auto d'après le navigateur : FR seulement si une langue
+  //    française est préférée, sinon fallback sur EN par défaut.
+  const prefs =
+    typeof navigator !== 'undefined'
+      ? [navigator.language, ...(navigator.languages ?? [])]
+      : []
+  const isFrench = prefs.some((l) => l?.toLowerCase().startsWith('fr'))
+  return isFrench ? 'fr' : 'en'
 }
 
 export function LangProvider({ children }: { children: ReactNode }) {
