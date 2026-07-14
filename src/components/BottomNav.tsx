@@ -9,7 +9,7 @@ const items: { tab: Tab; Icon: typeof HomeIcon }[] = [
   { tab: 'profile', Icon: ProfileIcon },
 ]
 
-export function BottomNav({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
+export function BottomNav({ tab, onChange, className = '' }: { tab: Tab; onChange: (t: Tab) => void; className?: string }) {
   const { t } = useLang()
   const labels: Record<Tab, string> = {
     home: t.navHome,
@@ -18,7 +18,7 @@ export function BottomNav({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => v
     profile: t.navProfile,
   }
   return (
-    <nav className="shrink-0 border-t border-neutral-800 bg-black/95 backdrop-blur flex items-center justify-around h-14 pb-[env(safe-area-inset-bottom)]">
+    <nav className={`shrink-0 border-t border-neutral-800 bg-black/95 backdrop-blur flex items-center justify-around h-14 pb-[env(safe-area-inset-bottom)] ${className}`}>
       {items.map(({ tab: it, Icon }) => (
         <button
           key={it}

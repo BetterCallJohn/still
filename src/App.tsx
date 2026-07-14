@@ -5,6 +5,7 @@ import { useLang } from './lang'
 import { usePersistentSet } from './hooks/usePersistentSet'
 import { TopBar } from './components/TopBar'
 import { BottomNav } from './components/BottomNav'
+import { Sidebar } from './components/Sidebar'
 import { Feed } from './components/Feed'
 import { ExploreGrid } from './components/ExploreGrid'
 import { SavedView } from './components/SavedView'
@@ -38,35 +39,43 @@ export default function App() {
   }
 
   return (
-    <div className="mx-auto max-w-[480px] h-full flex flex-col bg-black relative">
-      <TopBar tab={tab} />
+    <div className="h-full bg-black md:flex">
+      {/* Desktop-only left nav rail */}
+      <Sidebar tab={tab} onChange={changeTab} />
 
-      <main ref={scrollRef} className="flex-1 overflow-y-auto no-scrollbar">
-        {tab === 'home' && (
-          <Feed
-            posts={posts}
-            consumed={consumed}
-            isLiked={liked.has}
-            isSaved={saved.has}
-            toggleLike={liked.toggle}
-            toggleSave={saved.toggle}
-            markRead={read.add}
-          />
-        )}
-        {tab === 'explore' && <ExploreGrid posts={posts} onOpen={setOpenId} />}
-        {tab === 'saved' && <SavedView posts={savedPosts} onOpen={setOpenId} />}
-        {tab === 'profile' && (
-          <ProfileView
-            allPosts={posts}
-            likedPosts={likedPosts}
-            savedCount={saved.set.size}
-            bookCount={bookMeta.length}
-            onOpen={setOpenId}
-          />
-        )}
-      </main>
+      {/* App column — identical to the previous layout below md */}
+      <div className="mx-auto max-w-[480px] md:max-w-none md:mx-0 md:flex-1 md:min-w-0 h-full flex flex-col relative">
+        <TopBar tab={tab} className="md:hidden" />
 
-      <BottomNav tab={tab} onChange={changeTab} />
+        <main ref={scrollRef} className="flex-1 overflow-y-auto no-scrollbar">
+          <div className="mx-auto w-full md:max-w-[500px] md:py-6">
+            {tab === 'home' && (
+              <Feed
+                posts={posts}
+                consumed={consumed}
+                isLiked={liked.has}
+                isSaved={saved.has}
+                toggleLike={liked.toggle}
+                toggleSave={saved.toggle}
+                markRead={read.add}
+              />
+            )}
+            {tab === 'explore' && <ExploreGrid posts={posts} onOpen={setOpenId} />}
+            {tab === 'saved' && <SavedView posts={savedPosts} onOpen={setOpenId} />}
+            {tab === 'profile' && (
+              <ProfileView
+                allPosts={posts}
+                likedPosts={likedPosts}
+                savedCount={saved.set.size}
+                bookCount={bookMeta.length}
+                onOpen={setOpenId}
+              />
+            )}
+          </div>
+        </main>
+
+        <BottomNav tab={tab} onChange={changeTab} className="md:hidden" />
+      </div>
 
       {openPost && (
         <BookModal

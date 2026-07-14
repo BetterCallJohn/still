@@ -1,7 +1,7 @@
 import type { Tab } from '../types'
 import { useLang } from '../lang'
 
-export function TopBar({ tab }: { tab: Tab }) {
+export function TopBar({ tab, className = '' }: { tab: Tab; className?: string }) {
   const { lang, setLang, t } = useLang()
 
   const titles: Record<Exclude<Tab, 'home'>, string> = {
@@ -32,7 +32,7 @@ export function TopBar({ tab }: { tab: Tab }) {
   )
 
   return (
-    <header className="shrink-0 h-12 flex items-center justify-between px-4 border-b border-neutral-800 bg-black/95 backdrop-blur">
+    <header className={`shrink-0 h-12 flex items-center justify-between px-4 border-b border-neutral-800 bg-black/95 backdrop-blur ${className}`}>
       {tab === 'home' ? (
         <>
           <span className="brand text-2xl">still</span>

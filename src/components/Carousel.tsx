@@ -75,8 +75,14 @@ export function Carousel({ post, onComplete }: { post: Post; onComplete?: () => 
     }
   }
 
+  function go(dir: -1 | 1) {
+    const el = scroller.current
+    if (!el) return
+    el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' })
+  }
+
   return (
-    <div className="relative w-full aspect-[4/5] bg-black">
+    <div className="group relative w-full aspect-[4/5] bg-black">
       <div
         ref={scroller}
         onScroll={onScroll}
@@ -86,6 +92,28 @@ export function Carousel({ post, onComplete }: { post: Post; onComplete?: () => 
           <SlideCard key={i} slide={slide} post={post} index={i} total={total} />
         ))}
       </div>
+
+      {/* desktop nav arrows (hover) — hidden on mobile so touch stays swipe-only */}
+      {active > 0 && (
+        <button
+          type="button"
+          aria-label="Précédent"
+          onClick={() => go(-1)}
+          className="hidden md:group-hover:flex absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 items-center justify-center rounded-full bg-black/40 hover:bg-black/60 text-white backdrop-blur-sm z-10"
+        >
+          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+        </button>
+      )}
+      {active < total - 1 && (
+        <button
+          type="button"
+          aria-label="Suivant"
+          onClick={() => go(1)}
+          className="hidden md:group-hover:flex absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 items-center justify-center rounded-full bg-black/40 hover:bg-black/60 text-white backdrop-blur-sm z-10"
+        >
+          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+        </button>
+      )}
 
       {/* dots */}
       <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-1.5 pointer-events-none">
