@@ -16,7 +16,6 @@ interface PostProps {
 export function Post({ post, liked, saved, onToggleLike, onToggleSave, onRead }: PostProps) {
   const { t, lang } = useLang()
   const [burst, setBurst] = useState(false)
-  const [showFull, setShowFull] = useState(false)
   const [copied, setCopied] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -142,20 +141,6 @@ export function Post({ post, liked, saved, onToggleLike, onToggleSave, onRead }:
           <span className="font-semibold">{post.handle}</span>{' '}
           <span className="text-ink">{post.caption}</span>
         </p>
-        {!showFull ? (
-          <button onClick={() => setShowFull(true)} className="text-sm text-faint mt-0.5">
-            {t.viewCards(post.slides.length)}
-          </button>
-        ) : (
-          <div className="mt-2 space-y-1.5">
-            {post.slides.filter((s) => s.kind !== 'cover').map((s, i) => (
-              <p key={i} className="text-[13px] leading-snug text-muted">
-                <span className="font-semibold text-ink">{s.title}</span>
-                {s.body ? ` — ${s.body}` : ''}
-              </p>
-            ))}
-          </div>
-        )}
         <div className="mt-1.5 flex flex-wrap gap-x-2 text-sm text-sky-400">
           {post.tags.map((tag) => (
             <span key={tag}>#{tag}</span>
