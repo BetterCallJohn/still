@@ -1,6 +1,7 @@
 import type { BookMeta, Lang, Post, RawPost, RawSlide, Slide } from '../types'
 import { pick } from '../types'
 import { postsByBook } from './generatedPosts'
+import { bookExtras } from './bookExtras'
 
 // Métadonnées des livres ("comptes"). Le contenu (posts) vit dans generatedPosts.
 export const bookMeta: BookMeta[] = [
@@ -807,8 +808,22 @@ function localizeSlide(lang: Lang, s: RawSlide, coverEyebrow: string, pointN: nu
 
 function localizePost(lang: Lang, meta: BookMeta, raw: RawPost, index: number): Post {
   const coverEyebrow = pick(lang, meta.publisher).toUpperCase()
+  const extra = bookExtras[meta.id]
+
+  // Slide 2 « aperçu du livre » injectée juste après la couverture (si dispo).
+  let rawSlides = raw.slides
+  if (extra && raw.slides.length > 0) {
+    const overview: RawSlide = {
+      kind: 'point',
+      eyebrow: { fr: 'LE LIVRE', en: 'THE BOOK' },
+      title: meta.title,
+      body: extra.blurb,
+    }
+    rawSlides = [raw.slides[0], overview, ...raw.slides.slice(1)]
+  }
+
   let pointN = 0
-  const slides = raw.slides.map((s) => {
+  const slides = rawSlides.map((s) => {
     if (s.kind === 'point' && s.eyebrow === undefined) pointN += 1
     return localizeSlide(lang, s, coverEyebrow, pointN)
   })
@@ -824,7 +839,8 @@ function localizePost(lang: Lang, meta: BookMeta, raw: RawPost, index: number): 
     glyph: meta.glyph,
     readTime: meta.readTime,
     concept: pick(lang, raw.concept),
-    caption: pick(lang, raw.caption),
+    // Description : présentation du livre (pitch) si dispo, sinon accroche du post.
+    caption: extra ? pick(lang, extra.pitch) : pick(lang, raw.caption),
     tags: raw.tags,
     likes: raw.likes ?? seedLikes(id),
     slides,
