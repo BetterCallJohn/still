@@ -18,17 +18,21 @@ export function BottomNav({ tab, onChange, className = '' }: { tab: Tab; onChang
     profile: t.navProfile,
   }
   return (
-    <nav className={`shrink-0 border-t border-line bg-page/95 backdrop-blur flex items-center justify-around h-14 pb-[env(safe-area-inset-bottom)] ${className}`}>
-      {items.map(({ tab: it, Icon }) => (
-        <button
-          key={it}
-          onClick={() => onChange(it)}
-          aria-label={labels[it]}
-          className={`flex items-center justify-center flex-1 h-full ${tab === it ? 'text-ink' : 'text-faint'}`}
-        >
-          <Icon filled={tab === it} />
-        </button>
-      ))}
+    // La rangée d'icônes garde une hauteur fixe (h-14) ; la safe-area iOS
+    // (home indicator en mode web app) s'ajoute EN DESSOUS, sans écraser les icônes.
+    <nav className={`shrink-0 border-t border-line bg-page/95 backdrop-blur pb-[env(safe-area-inset-bottom)] ${className}`}>
+      <div className="flex items-center justify-around h-14">
+        {items.map(({ tab: it, Icon }) => (
+          <button
+            key={it}
+            onClick={() => onChange(it)}
+            aria-label={labels[it]}
+            className={`flex items-center justify-center flex-1 h-full ${tab === it ? 'text-ink' : 'text-faint'}`}
+          >
+            <Icon filled={tab === it} />
+          </button>
+        ))}
+      </div>
     </nav>
   )
 }
